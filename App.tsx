@@ -1,6 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { Provider } from 'react-redux';
+import reactRedux from 'react-redux';
 import { store } from './src/store/store';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -24,12 +22,12 @@ export default function App() {
   }
 
   return (
-    <Provider store={store}>
+    <reactRedux.Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="tabs" component={BottomNav} />
         </Stack.Navigator>
       </NavigationContainer>
-    </Provider>
+    </reactRedux.Provider>
   );
 }
