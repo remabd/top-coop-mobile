@@ -1,9 +1,12 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
+import panierReducer from './panierSlice';
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {
+    panier: panierReducer,
+  },
 });
 
 export type AppStore = typeof store;
-export type typeRootState = ReturnType<AppStore["getState"]>;
-export type AppDispatch = AppStore["dispatch"];
+export type RootState = ReturnType<AppStore['getState']>;
+export type AppDispatch = AppStore['dispatch'];
