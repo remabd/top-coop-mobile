@@ -1,11 +1,14 @@
-import { FlatList, View, Text } from 'react-native';
+import { FlatList, View, Text, Button } from 'react-native';
 import { Panier, ProduitPanier } from '../models/panier.type';
 import { useDispatch, useSelector } from 'react-redux';
 import { modifiePanier, panierSelector } from '../store/panierSlice';
 import { AppDispatch } from '../store/store';
 import { ProductCard } from '../components/panier/ProductCard';
+import { useNavigation } from '@react-navigation/native';
+import { ActionZone } from '../components/panier/ActionZone';
 
 export function PanierScreen() {
+  const navigation = useNavigation<any>();
   const dispatch = useDispatch<AppDispatch>();
   const panier = useSelector(panierSelector);
 
@@ -31,6 +34,13 @@ export function PanierScreen() {
 
   return (
     <View>
+      <Text>Panier</Text>
+      <Button
+        title="voir les produits"
+        onPress={() => {
+          navigation.navigate('catalogue');
+        }}
+      />
       <FlatList
         renderItem={({ item }) => (
           <ProductCard
@@ -43,6 +53,7 @@ export function PanierScreen() {
         keyExtractor={(item) => item.id}
         ListEmptyComponent={<Text>Aucun produit</Text>}
       />
+      <ActionZone />
     </View>
   );
 }
