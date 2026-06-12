@@ -1,12 +1,8 @@
-import axios from 'axios';
+import { api, request } from './client';
+import { Role } from '../models/panier.type';
 
-export class AuthApi {
-  private baseUrl: string;
-  constructor() {
-    this.baseUrl = process.env.EXPO_PUBLIC_API_URL + '/auth';
-  }
-
-  public async connexion(data: { email: string; motDePasse: string }) {
-    return await axios.post(`${this.baseUrl}/login`, data);
-  }
+export function connexion(data: { email: string; motDePasse: string }) {
+  return request<{ access_token: string; role: Role }>(
+    api.post('/auth/login', data)
+  );
 }

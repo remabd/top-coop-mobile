@@ -1,4 +1,4 @@
-import reactRedux, { useDispatch, useSelector } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, store } from './src/store/store';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -17,6 +17,12 @@ import {
 import { useEffect } from 'react';
 import { loadToken } from './src/store/securetoken';
 import { ActivityIndicator, View } from 'react-native';
+import {
+  useFonts,
+  Outfit_400Regular,
+  Outfit_600SemiBold,
+  Outfit_700Bold,
+} from '@expo-google-fonts/outfit';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -35,13 +41,19 @@ function Root() {
   const auth = useSelector(authSelector);
   const dispatch = useDispatch<AppDispatch>();
 
+  const [fontsLoaded] = useFonts({
+    Outfit_400Regular,
+    Outfit_600SemiBold,
+    Outfit_700Bold,
+  });
+
   useEffect(() => {
     loadToken().then((t) =>
       t ? dispatch(connexion(t)) : dispatch(estDeconnecte())
     );
   }, []);
 
-  if (auth.statut === AuthStatut.CHARGEMENT) {
+  if (!fontsLoaded || auth.statut === AuthStatut.CHARGEMENT) {
     return (
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <ActivityIndicator />
@@ -67,8 +79,8 @@ function Root() {
 
 export default function App() {
   return (
-    <reactRedux.Provider store={store}>
+    <Provider store={store}>
       <Root />
-    </reactRedux.Provider>
+    </Provider>
   );
 }
