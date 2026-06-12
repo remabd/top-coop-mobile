@@ -1,8 +1,8 @@
 export interface Panier {
-  id?: string;
+  id: string;
   prix: number;
-  dateCreation?: Date;
-  utilisateurId?: string;
+  dateCreation: Date;
+  utilisateurId: string;
   produits: ProduitPanier[];
 }
 
@@ -42,17 +42,6 @@ export interface ProduitAvecType {
   dateSortie?: Date | null;
   datePeremption?: Date | null;
   typeProduit: TypeProduit;
-}
-
-export enum Role {
-  USER,
-  ADMIN,
-}
-
-export enum Status {
-  AVANT,
-  EN_COURS,
-  FINI,
 }
 
 export enum Unite {

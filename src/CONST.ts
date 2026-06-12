@@ -1,8 +1,12 @@
 export const COLORS = {
-  fond: '#CCE6BB',
-  accent: '#CE8536',
+  vert_clair: '#CCE6BB',
+  vert_clair_60: '#ebf5e4',
+  vert_fonce: '#445D44',
+  orange: '#CE8536',
   erreur: '#C0392B',
   blanc: '#FFFFFF',
   texte: '#333333',
   placeholder: '#6B6B6B',
+  avatar: '#D9D9D9',
+  bordure: '#D7D7D7',
 };

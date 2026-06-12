@@ -29,7 +29,7 @@ const Stack = createNativeStackNavigator();
 
 function BottomNav() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="profil" component={Profil} />
       <Tab.Screen name="panier" component={PanierScreen} />
       <Tab.Screen name="participations" component={Participations} />

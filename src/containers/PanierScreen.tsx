@@ -33,7 +33,7 @@ export function PanierScreen() {
   }
 
   return (
-    <View>
+    <View style={{ paddingTop: 30 }}>
       <Text>Panier</Text>
       <Button
         title="voir les produits"
