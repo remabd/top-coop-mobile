@@ -1,5 +1,5 @@
 import { api, request } from './client';
-import { Role } from '../models/panier.type';
+import { Role } from '../models/utilisateur.type';
 
 export function connexion(data: { email: string; motDePasse: string }) {
   return request<{ access_token: string; role: Role }>(
