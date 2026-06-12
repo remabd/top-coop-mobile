@@ -116,14 +116,14 @@ export function Connexion() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: COLORS.fond,
+    backgroundColor: COLORS.vert_clair,
     paddingHorizontal: 24,
     paddingTop: 70,
   },
   titre: {
     fontFamily: 'Outfit_700Bold',
     fontSize: 26,
-    color: COLORS.accent,
+    color: COLORS.orange,
     textAlign: 'center',
     marginBottom: 130,
   },
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     color: COLORS.texte,
   },
   bouton: {
-    backgroundColor: COLORS.accent,
+    backgroundColor: COLORS.orange,
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 40,

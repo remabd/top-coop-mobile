@@ -1,7 +1,7 @@
-import axios from 'axios';
+import { create, isAxiosError } from 'axios';
 import { ApiResult } from './response.type';
 
-export const api = axios.create({
+export const api = create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
   timeout: 10000,
 });
@@ -22,7 +22,7 @@ export async function request<T>(
     const { data } = await call;
     return { ok: true, data };
   } catch (e) {
-    if (axios.isAxiosError(e)) {
+    if (isAxiosError(e)) {
       return e.response
         ? {
             ok: false,
