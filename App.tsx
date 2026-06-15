@@ -17,6 +17,7 @@ import {
 import { useEffect } from 'react';
 import { loadToken } from './src/store/securetoken';
 import { ActivityIndicator, View } from 'react-native';
+import { ToastHote } from './src/components/ToastHote';
 import {
   useFonts,
   Outfit_400Regular,
@@ -73,6 +74,7 @@ function Root() {
           <Stack.Screen name="connexion" component={Connexion} />
         )}
       </Stack.Navigator>
+      <ToastHote />
     </NavigationContainer>
   );
 }

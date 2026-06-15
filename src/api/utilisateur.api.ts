@@ -40,7 +40,9 @@ export async function chargeParticipations() {
   );
 }
 
-export async function demandeAnnulation(participation: Participation) {
+export async function demandeAnnulationParticipation(
+  participation: Participation
+) {
   const token = await loadToken();
   return request<Participation>(
     api.get('/participation/annuler/' + participation.id, {
