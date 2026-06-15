@@ -20,11 +20,16 @@ import {
 } from '../../STYLE_CONSTS';
 import { TROIS_JOURS_EN_MS } from '../../CONSTS';
 import { AnnuleParticipation } from './AnnuleParticipation';
+import { demandeAnnulation } from '../../api/utilisateur.api';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../store/store';
+import { afficheToast } from '../../store/toastSlice';
 
 export function Participations(props: {
   participations: ParticipationAvecCreneauEtCoParticipants[];
 }) {
   const participations = props.participations;
+  const dispatch = useDispatch<AppDispatch>();
   const [visible, setVisible] = useState<boolean>(false);
   const [confirme, setConfirme] = useState<boolean>(false);
   const [choisie, choisir] =
@@ -40,11 +45,25 @@ export function Participations(props: {
     );
   }
 
-  function confirmeAnnulation() {
+  async function confirmeAnnulation() {
     setConfirme(false);
+    if (!choisie) return;
+    const response = await demandeAnnulation(choisie);
+    if (response.ok) {
+      dispatch(
+        afficheToast({ message: 'Participation annulée', niveau: 'ok' })
+      );
+    } else {
+      dispatch(
+        afficheToast({
+          message: "Échec de l'annulation",
+          niveau: 'alerte',
+        })
+      );
+    }
   }
 
-  function annule(item: ParticipationAvecCreneauEtCoParticipants) {
+  function afficheAnnulation(item: ParticipationAvecCreneauEtCoParticipants) {
     choisir(item);
     setConfirme(true);
   }
@@ -75,7 +94,7 @@ export function Participations(props: {
                       {new Date(item.creneau.dateDebut).toLocaleDateString()}
                     </Text>
                     <Pressable
-                      onPress={() => annule(item)}
+                      onPress={() => afficheAnnulation(item)}
                       disabled={desactive}
                       hitSlop={8}
                     >
