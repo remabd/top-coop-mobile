@@ -1,32 +1,39 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { COLORS } from '../../CONST';
 import { Panier } from '../../models/panier.type';
 import { Accordeon } from '../Accordeon';
-import { COLORS } from '../../CONST';
 
 export function Paniers(props: { paniers: Panier[] }) {
   const paniers = props.paniers;
+  const [tous, setTous] = useState<boolean>(false);
 
   const body = (
-    <FlatList
-      data={paniers}
-      scrollEnabled={false}
-      renderItem={({ item }) => (
-        <View style={styles.ligne}>
-          <Text style={styles.nom} numberOfLines={1}>
-            Panier {item.id}
-          </Text>
-          <Text style={styles.date}>
-            {item.dateCreation
-              ? new Date(item.dateCreation).toLocaleDateString()
-              : ''}
-          </Text>
-          <Text style={styles.prix}>{item.prix}€</Text>
-        </View>
-      )}
-      keyExtractor={(item) => item.id}
-      ItemSeparatorComponent={() => <View style={styles.separateur} />}
-      ListEmptyComponent={<Text style={styles.vide}>Aucun paniers</Text>}
-    />
+    <>
+      <FlatList
+        data={tous ? paniers : paniers.slice(0, 6)}
+        scrollEnabled={false}
+        renderItem={({ item }) => (
+          <View style={styles.ligne}>
+            <Text style={styles.date}>
+              {item.dateCreation
+                ? 'Le ' + new Date(item.dateCreation).toLocaleDateString()
+                : ''}
+            </Text>
+            <Text>
+              À {new Date(item.dateCreation).toLocaleTimeString().slice(0, 5)}
+            </Text>
+            <Text style={styles.prix}>{item.prix}€</Text>
+          </View>
+        )}
+        keyExtractor={(item) => item.id}
+        ItemSeparatorComponent={() => <View style={styles.separateur} />}
+        ListEmptyComponent={<Text style={styles.vide}>Aucun paniers</Text>}
+      />
+      <Pressable onPress={() => setTous((t) => !t)}>
+        <Text>{tous ? 'Vois moins' : 'Voir plus'}</Text>
+      </Pressable>
+    </>
   );
 
   return <Accordeon title="Mes paniers" body={body} />;
@@ -36,6 +43,7 @@ const styles = StyleSheet.create({
   ligne: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: COLORS.vert_clair,
     borderRadius: 8,
     paddingVertical: 12,

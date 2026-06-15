@@ -10,3 +10,4 @@ export const COLORS = {
   avatar: '#D9D9D9',
   bordure: '#D7D7D7',
 };
+export const TROIS_JOURS_EN_MS = 3 * 24 * 60 * 60 * 1000;
