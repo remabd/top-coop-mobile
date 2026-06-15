@@ -10,7 +10,7 @@ import { ParticipationAvecCreneauEtCoParticipants } from '../../models/participa
 import { Accordeon } from '../Accordeon';
 import { useState } from 'react';
 import { ParticipationDetails } from './ParticipationDetails';
-import { COLORS } from '../../CONST';
+import { COLORS, TROIS_JOURS_EN_MS } from '../../CONST';
 import { AnnuleParticipation } from './AnnuleParticipation';
 
 export function Participations(props: {
@@ -21,7 +21,7 @@ export function Participations(props: {
   const [confirme, setConfirme] = useState<boolean>(false);
   const [choisie, choisir] =
     useState<ParticipationAvecCreneauEtCoParticipants>();
-  const TROIS_JOURS_EN_MS = 3 * 24 * 60 * 60 * 1000;
+  const [tous, setTous] = useState<boolean>(false);
 
   function peutannuler(
     item: ParticipationAvecCreneauEtCoParticipants
@@ -33,8 +33,7 @@ export function Participations(props: {
   }
 
   function confirmeAnnulation() {
-      setConfirme(false);
-      
+    setConfirme(false);
   }
 
   function annule(item: ParticipationAvecCreneauEtCoParticipants) {
@@ -52,40 +51,45 @@ export function Participations(props: {
       <Accordeon
         title="Mes participations"
         body={
-          <FlatList
-            data={participations}
-            scrollEnabled={false}
-            renderItem={({ item }) => {
-              const desactive = peutannuler(item);
-              return (
-                <Pressable
-                  style={styles.ligne}
-                  onPress={() => afficheDetails(item)}
-                >
-                  <Text style={styles.nom}>{item.creneau.nom}</Text>
-                  <Text style={styles.date}>
-                    {new Date(item.creneau.dateDebut).toLocaleDateString()}
-                  </Text>
+          <>
+            <FlatList
+              data={tous ? participations : participations.slice(0, 6)}
+              scrollEnabled={false}
+              renderItem={({ item }) => {
+                const desactive = peutannuler(item);
+                return (
                   <Pressable
-                    onPress={() => annule(item)}
-                    disabled={desactive}
-                    hitSlop={8}
+                    style={styles.ligne}
+                    onPress={() => afficheDetails(item)}
                   >
-                    <Text
-                      style={[styles.annuler, desactive && styles.annulerOff]}
-                    >
-                      Annuler
+                    <Text style={styles.nom}>{item.creneau.nom}</Text>
+                    <Text style={styles.date}>
+                      {new Date(item.creneau.dateDebut).toLocaleDateString()}
                     </Text>
+                    <Pressable
+                      onPress={() => annule(item)}
+                      disabled={desactive}
+                      hitSlop={8}
+                    >
+                      <Text
+                        style={[styles.annuler, desactive && styles.annulerOff]}
+                      >
+                        Annuler
+                      </Text>
+                    </Pressable>
                   </Pressable>
-                </Pressable>
-              );
-            }}
-            keyExtractor={(item) => item.id}
-            ItemSeparatorComponent={() => <View style={styles.separateur} />}
-            ListEmptyComponent={
-              <Text style={styles.vide}>Aucunes participations</Text>
-            }
-          />
+                );
+              }}
+              keyExtractor={(item) => item.id}
+              ItemSeparatorComponent={() => <View style={styles.separateur} />}
+              ListEmptyComponent={
+                <Text style={styles.vide}>Aucunes participations</Text>
+              }
+            />
+            <Pressable onPress={() => setTous((t) => !t)}>
+              <Text>{tous ? 'Voir moins' : 'Voir plus'}</Text>
+            </Pressable>{' '}
+          </>
         }
       />
       <Modal
