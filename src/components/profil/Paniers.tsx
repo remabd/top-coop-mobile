@@ -30,8 +30,14 @@ export function Paniers(props: { paniers: Panier[] }) {
         ItemSeparatorComponent={() => <View style={styles.separateur} />}
         ListEmptyComponent={<Text style={styles.vide}>Aucun paniers</Text>}
       />
-      <Pressable onPress={() => setTous((t) => !t)}>
-        <Text>{tous ? 'Vois moins' : 'Voir plus'}</Text>
+      <Pressable
+        style={styles.voirPlus}
+        onPress={() => setTous((t) => !t)}
+        hitSlop={8}
+      >
+        <Text style={styles.voirPlusTexte}>
+          {tous ? 'Voir moins' : 'Voir plus'}
+        </Text>
       </Pressable>
     </>
   );
@@ -75,5 +81,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Outfit_400Regular',
     fontSize: 13,
     color: COLORS.placeholder,
+  },
+  voirPlus: {
+    alignSelf: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+  },
+  voirPlusTexte: {
+    fontFamily: 'Outfit_600SemiBold',
+    fontWeight: 'bold',
+    fontSize: 15,
+    color: COLORS.vert_fonce,
+    fontStyle: 'italic',
   },
 });

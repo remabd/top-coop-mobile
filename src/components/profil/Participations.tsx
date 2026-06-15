@@ -86,9 +86,15 @@ export function Participations(props: {
                 <Text style={styles.vide}>Aucunes participations</Text>
               }
             />
-            <Pressable onPress={() => setTous((t) => !t)}>
-              <Text>{tous ? 'Voir moins' : 'Voir plus'}</Text>
-            </Pressable>{' '}
+            <Pressable
+              style={styles.voirPlus}
+              onPress={() => setTous((t) => !t)}
+              hitSlop={8}
+            >
+              <Text style={styles.voirPlusTexte}>
+                {tous ? 'Voir moins' : 'Voir plus'}
+              </Text>
+            </Pressable>
           </>
         }
       />
@@ -126,13 +132,13 @@ export function Participations(props: {
               onPress={() => setConfirme(false)}
             >
               <Text style={styles.boutonFermerTexte}>Non</Text>
-            </Pressable>{' '}
+            </Pressable>
             <Pressable style={styles.boutonFermer} onPress={confirmeAnnulation}>
               <Text style={styles.boutonFermerTexte}>Oui</Text>
             </Pressable>
           </Pressable>
         </Pressable>
-      </Modal>{' '}
+      </Modal>
     </>
   );
 }
@@ -175,6 +181,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Outfit_400Regular',
     fontSize: 13,
     color: COLORS.placeholder,
+  },
+  voirPlus: {
+    alignSelf: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+  },
+  voirPlusTexte: {
+    fontFamily: 'Outfit_600SemiBold',
+    fontWeight: 'bold',
+    fontSize: 15,
+    color: COLORS.vert_fonce,
+    fontStyle: 'italic',
   },
   overlay: {
     flex: 1,
