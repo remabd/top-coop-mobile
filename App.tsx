@@ -23,6 +23,7 @@ import {
   Outfit_600SemiBold,
   Outfit_700Bold,
 } from '@expo-google-fonts/outfit';
+import Camera from './src/containers/Camera';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -68,6 +69,7 @@ function Root() {
           <>
             <Stack.Screen name="tabs" component={BottomNav} />
             <Stack.Screen name="catalogue" component={Catalogue} />
+            <Stack.Screen name="camera" component={Camera} />
           </>
         ) : (
           <Stack.Screen name="connexion" component={Connexion} />
