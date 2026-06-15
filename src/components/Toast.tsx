@@ -1,13 +1,16 @@
 import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS, RADIUS, SPACING, TEXTE } from '../STYLE_CONSTS';
 
 export type NiveauToast = 'ok' | 'avertissement' | 'alerte';
 
-const NIVEAUX: Record<NiveauToast, { emote: string; couleur: string }> = {
-  ok: { emote: '✅', couleur: COLORS.vert_fonce },
-  avertissement: { emote: '⚠️', couleur: COLORS.orange },
-  alerte: { emote: '🚨', couleur: COLORS.erreur },
+type NomIcone = keyof typeof MaterialIcons.glyphMap;
+
+const NIVEAUX: Record<NiveauToast, { icone: NomIcone; couleur: string }> = {
+  ok: { icone: 'check-circle', couleur: COLORS.vert_fonce },
+  avertissement: { icone: 'warning', couleur: COLORS.orange },
+  alerte: { icone: 'error', couleur: COLORS.erreur },
 };
 
 const DUREE_ANIMATION = 250;
@@ -86,7 +89,12 @@ export function Toast(props: {
           />
         </View>
         <View style={styles.contenu}>
-          <Text style={styles.emote}>{niveau.emote}</Text>
+          <MaterialIcons
+            name={niveau.icone}
+            size={22}
+            color={niveau.couleur}
+            style={styles.icone}
+          />
           <Text style={styles.texte}>{props.message}</Text>
         </View>
       </View>
@@ -100,7 +108,6 @@ const styles = StyleSheet.create({
     top: 50,
     left: SPACING.xl,
     right: SPACING.xl,
-    // ombre (comme la carte de Participations) au lieu d'une bordure
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -125,8 +132,7 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.lg,
   },
-  emote: {
-    fontSize: 20,
+  icone: {
     marginRight: SPACING.md,
   },
   texte: {
