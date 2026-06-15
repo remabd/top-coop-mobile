@@ -20,7 +20,7 @@ import {
 } from '../../STYLE_CONSTS';
 import { TROIS_JOURS_EN_MS } from '../../CONSTS';
 import { AnnuleParticipation } from './AnnuleParticipation';
-import { demandeAnnulation } from '../../api/utilisateur.api';
+import { demandeAnnulationParticipation } from '../../api/utilisateur.api';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store/store';
 import { afficheToast } from '../../store/toastSlice';
@@ -48,7 +48,7 @@ export function Participations(props: {
   async function confirmeAnnulation() {
     setConfirme(false);
     if (!choisie) return;
-    const response = await demandeAnnulation(choisie);
+    const response = await demandeAnnulationParticipation(choisie);
     console.log(response);
     if (!response.ok) {
       dispatch(
