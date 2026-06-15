@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { UtilisateurInfos } from '../../models/utilisateur.type';
-import { COLORS } from '../../CONST';
+import { COLORS, FONT_SIZE, SPACING, TEXTE } from '../../STYLE_CONSTS';
 
 export function UtilisateurCard(props: { utilisateur: UtilisateurInfos }) {
   const utilisateur = props.utilisateur;
@@ -32,16 +32,11 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.avatar,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: SPACING.md,
   },
   nom: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 15,
-    color: COLORS.texte,
+    ...TEXTE.corpsFort,
+    fontSize: FONT_SIZE.lg,
   },
-  role: {
-    fontFamily: 'Outfit_400Regular',
-    fontSize: 13,
-    color: COLORS.placeholder,
-  },
+  role: TEXTE.discret,
 });

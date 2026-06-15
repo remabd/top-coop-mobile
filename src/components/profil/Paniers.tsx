@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { COLORS } from '../../CONST';
+import { COLORS, RADIUS, SPACING, TEXTE } from '../../STYLE_CONSTS';
 import { Panier } from '../../models/panier.type';
 import { Accordeon } from '../Accordeon';
 
@@ -51,47 +51,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: COLORS.vert_clair,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
   },
   separateur: {
-    height: 8,
+    height: SPACING.sm,
   },
   nom: {
+    ...TEXTE.corpsFort,
     flex: 1,
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 13,
-    color: COLORS.texte,
   },
   date: {
-    fontFamily: 'Outfit_400Regular',
-    fontSize: 13,
-    color: COLORS.texte,
+    ...TEXTE.corps,
     marginHorizontal: 10,
   },
   prix: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 13,
-    color: COLORS.texte,
+    ...TEXTE.corpsFort,
     minWidth: 32,
     textAlign: 'right',
   },
-  vide: {
-    fontFamily: 'Outfit_400Regular',
-    fontSize: 13,
-    color: COLORS.placeholder,
-  },
+  vide: TEXTE.discret,
   voirPlus: {
     alignSelf: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
   },
   voirPlusTexte: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontWeight: 'bold',
-    fontSize: 15,
+    ...TEXTE.titreSection,
     color: COLORS.vert_fonce,
-    fontStyle: 'italic',
   },
 });

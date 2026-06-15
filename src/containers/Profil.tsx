@@ -18,7 +18,7 @@ import {
   chargePaniers,
   chargeParticipations,
 } from '../api/utilisateur.api';
-import { COLORS } from '../CONST';
+import { COLORS, FONTS, FONT_SIZE, RADIUS, SPACING } from '../STYLE_CONSTS';
 import { UtilisateurCard } from '../components/profil/UtilisateurCard';
 import { Paniers } from '../components/profil/Paniers';
 import { Participations } from '../components/profil/Participations';
@@ -127,41 +127,41 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.blanc,
   },
   contenu: {
-    padding: 16,
+    padding: SPACING.xl,
     paddingTop: 30,
     paddingBottom: 32,
   },
   entete: {
     backgroundColor: COLORS.blanc,
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 18,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.xl,
+    marginBottom: SPACING.xxl,
   },
   titre: {
-    fontFamily: 'Outfit_700Bold',
-    fontSize: 22,
+    fontFamily: FONTS.bold,
+    fontSize: FONT_SIZE.titre,
     color: COLORS.orange,
     textAlign: 'center',
-    marginBottom: 14,
+    marginBottom: SPACING.lg,
   },
   erreur: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 13,
+    fontFamily: FONTS.semibold,
+    fontSize: FONT_SIZE.sm,
     color: COLORS.erreur,
     textAlign: 'center',
-    marginBottom: 14,
+    marginBottom: SPACING.lg,
   },
   preference: {
     paddingVertical: 7,
   },
   preferenceTexte: {
-    fontFamily: 'Outfit_400Regular',
-    fontSize: 14,
+    fontFamily: FONTS.regular,
+    fontSize: FONT_SIZE.md,
     color: COLORS.texte,
   },
   deconnexion: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 14,
+    fontFamily: FONTS.semibold,
+    fontSize: FONT_SIZE.md,
     color: COLORS.orange,
   },
 });

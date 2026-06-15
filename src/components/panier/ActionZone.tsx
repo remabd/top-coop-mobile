@@ -1,5 +1,4 @@
 import { Button, Text, View } from 'react-native';
-import { Panier } from '../../models/panier.type';
 import { useSelector } from 'react-redux';
 import { panierSelector } from '../../store/panierSlice';
 

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { ParticipationAvecCreneauEtCoParticipants } from '../../models/participation.type';
-import { COLORS } from '../../CONST';
+import { COLORS, RADIUS, SPACING, TEXTE } from '../../STYLE_CONSTS';
 
 export function ParticipationDetails(props: {
   participation: ParticipationAvecCreneauEtCoParticipants;
@@ -31,48 +31,32 @@ export function ParticipationDetails(props: {
 
 const styles = StyleSheet.create({
   titre: {
-    fontFamily: 'Outfit_700Bold',
-    fontSize: 16,
-    color: COLORS.texte,
+    ...TEXTE.titreModal,
     textAlign: 'center',
-    marginBottom: 14,
+    marginBottom: SPACING.lg,
   },
   creneau: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: COLORS.vert_clair,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    marginBottom: 14,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.lg,
   },
-  creneauNom: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 13,
-    color: COLORS.texte,
-  },
-  creneauDate: {
-    fontFamily: 'Outfit_400Regular',
-    fontSize: 13,
-    color: COLORS.texte,
-  },
+  creneauNom: TEXTE.corpsFort,
+  creneauDate: TEXTE.corps,
   label: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 13,
-    color: COLORS.texte,
-    marginBottom: 8,
+    ...TEXTE.corpsFort,
+    marginBottom: SPACING.sm,
   },
   participant: {
     backgroundColor: COLORS.vert_clair,
-    borderRadius: 8,
+    borderRadius: RADIUS.sm,
     paddingVertical: 11,
-    paddingHorizontal: 14,
-    marginBottom: 8,
+    paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.sm,
   },
-  participantTexte: {
-    fontFamily: 'Outfit_400Regular',
-    fontSize: 13,
-    color: COLORS.texte,
-  },
+  participantTexte: TEXTE.corps,
 });
