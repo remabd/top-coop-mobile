@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { connexion as apiConnexion } from '../api/auth.api';
-import { COLORS } from '../CONST';
+import { COLORS, FONTS, FONT_SIZE, RADIUS, SPACING } from '../STYLE_CONSTS';
 import { saveToken } from '../store/securetoken';
 import { useDispatch } from 'react-redux';
 import { connexion } from '../store/authSlice';
@@ -121,27 +121,27 @@ const styles = StyleSheet.create({
     paddingTop: 70,
   },
   titre: {
-    fontFamily: 'Outfit_700Bold',
-    fontSize: 26,
+    fontFamily: FONTS.bold,
+    fontSize: FONT_SIZE.titreXl,
     color: COLORS.orange,
     textAlign: 'center',
     marginBottom: 130,
   },
   erreur: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 14,
+    fontFamily: FONTS.semibold,
+    fontSize: FONT_SIZE.md,
     color: COLORS.erreur,
     textAlign: 'center',
-    marginBottom: 18,
+    marginBottom: SPACING.xxl,
   },
   champ: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.blanc,
-    borderRadius: 10,
+    borderRadius: RADIUS.md,
     height: 54,
-    paddingHorizontal: 16,
-    marginBottom: 18,
+    paddingHorizontal: SPACING.xl,
+    marginBottom: SPACING.xxl,
     // ombre douce
     shadowColor: '#000',
     shadowOpacity: 0.08,
@@ -151,19 +151,19 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontFamily: 'Outfit_400Regular',
-    fontSize: 15,
+    fontFamily: FONTS.regular,
+    fontSize: FONT_SIZE.lg,
     color: COLORS.texte,
   },
   bouton: {
     backgroundColor: COLORS.orange,
-    borderRadius: 10,
+    borderRadius: RADIUS.md,
     paddingVertical: 15,
     paddingHorizontal: 40,
     alignSelf: 'center',
     alignItems: 'center',
     minWidth: 190,
-    marginTop: 16,
+    marginTop: SPACING.xl,
     shadowColor: '#000',
     shadowOpacity: 0.12,
     shadowRadius: 4,
@@ -174,8 +174,8 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   boutonTexte: {
-    fontFamily: 'Outfit_700Bold',
-    fontSize: 16,
+    fontFamily: FONTS.bold,
+    fontSize: FONT_SIZE.xl,
     color: COLORS.blanc,
   },
 });

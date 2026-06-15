@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet } from 'react-native';
 import { ParticipationAvecCreneauEtCoParticipants } from '../../models/participation.type';
-import { COLORS } from '../../CONST';
+import { COLORS, RADIUS, SPACING, TEXTE } from '../../STYLE_CONSTS';
 
 export function AnnuleParticipation(props: {
   participation: ParticipationAvecCreneauEtCoParticipants;
@@ -26,19 +26,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: COLORS.vert_clair,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    marginBottom: 14,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.lg,
   },
-  creneauNom: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 13,
-    color: COLORS.texte,
-  },
-  creneauDate: {
-    fontFamily: 'Outfit_400Regular',
-    fontSize: 13,
-    color: COLORS.texte,
-  },
+  creneauNom: TEXTE.corpsFort,
+  creneauDate: TEXTE.corps,
 });

@@ -10,7 +10,15 @@ import { ParticipationAvecCreneauEtCoParticipants } from '../../models/participa
 import { Accordeon } from '../Accordeon';
 import { useState } from 'react';
 import { ParticipationDetails } from './ParticipationDetails';
-import { COLORS, TROIS_JOURS_EN_MS } from '../../CONST';
+import {
+  COLORS,
+  FONTS,
+  FONT_SIZE,
+  RADIUS,
+  SPACING,
+  TEXTE,
+} from '../../STYLE_CONSTS';
+import { TROIS_JOURS_EN_MS } from '../../CONSTS';
 import { AnnuleParticipation } from './AnnuleParticipation';
 
 export function Participations(props: {
@@ -148,28 +156,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.vert_clair,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
   },
   separateur: {
-    height: 8,
+    height: SPACING.sm,
   },
   nom: {
+    ...TEXTE.corpsFort,
     flex: 1,
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 13,
-    color: COLORS.texte,
   },
   date: {
-    fontFamily: 'Outfit_400Regular',
-    fontSize: 13,
-    color: COLORS.texte,
+    ...TEXTE.corps,
     marginHorizontal: 10,
   },
   annuler: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 13,
+    ...TEXTE.corpsFort,
     color: COLORS.orange,
     textDecorationLine: 'underline',
   },
@@ -177,22 +180,15 @@ const styles = StyleSheet.create({
     color: COLORS.placeholder,
     textDecorationLine: 'none',
   },
-  vide: {
-    fontFamily: 'Outfit_400Regular',
-    fontSize: 13,
-    color: COLORS.placeholder,
-  },
+  vide: TEXTE.discret,
   voirPlus: {
     alignSelf: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
   },
   voirPlusTexte: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontWeight: 'bold',
-    fontSize: 15,
+    ...TEXTE.titreSection,
     color: COLORS.vert_fonce,
-    fontStyle: 'italic',
   },
   overlay: {
     flex: 1,
@@ -202,8 +198,8 @@ const styles = StyleSheet.create({
   carte: {
     width: '85%',
     backgroundColor: COLORS.blanc,
-    borderRadius: 14,
-    padding: 18,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.xxl,
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -212,14 +208,14 @@ const styles = StyleSheet.create({
   },
   boutonFermer: {
     backgroundColor: COLORS.vert_fonce,
-    borderRadius: 8,
-    paddingVertical: 12,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACING.md,
     alignItems: 'center',
-    marginTop: 14,
+    marginTop: SPACING.lg,
   },
   boutonFermerTexte: {
-    fontFamily: 'Outfit_600SemiBold',
-    fontSize: 15,
+    fontFamily: FONTS.semibold,
+    fontSize: FONT_SIZE.lg,
     color: COLORS.blanc,
   },
 });

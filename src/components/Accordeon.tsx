@@ -7,7 +7,7 @@ import {
   Text,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { COLORS } from '../CONST';
+import { COLORS, SPACING, TEXTE } from '../STYLE_CONSTS';
 
 export function Accordeon(props: {
   title: string;
@@ -58,12 +58,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 8,
   },
-  titre: {
-    fontFamily: 'Outfit_700Bold',
-    fontSize: 15,
-    color: COLORS.texte,
-  },
+  titre: TEXTE.titreSection,
   corps: {
-    gap: 8,
+    gap: SPACING.sm,
   },
 });
