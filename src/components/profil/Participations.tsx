@@ -49,11 +49,8 @@ export function Participations(props: {
     setConfirme(false);
     if (!choisie) return;
     const response = await demandeAnnulation(choisie);
-    if (response.ok) {
-      dispatch(
-        afficheToast({ message: 'Participation annulée', niveau: 'ok' })
-      );
-    } else {
+    console.log(response);
+    if (!response.ok) {
       dispatch(
         afficheToast({
           message: "Échec de l'annulation",
@@ -61,6 +58,9 @@ export function Participations(props: {
         })
       );
     }
+    dispatch(afficheToast({ message: 'Participation annulée', niveau: 'ok' }));
+    const index = participations.findIndex((p) => p.id === choisie.id);
+    participations.splice(index, 1);
   }
 
   function afficheAnnulation(item: ParticipationAvecCreneauEtCoParticipants) {
