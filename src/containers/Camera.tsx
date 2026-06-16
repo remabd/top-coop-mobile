@@ -77,7 +77,7 @@ export default function Camera() {
               <Text style={styles.boutonTexte}>Scanner à nouveau</Text>
             </Pressable>
             <Pressable style={styles.bouton} onPress={() => valideScan()}>
-              <Text style={styles.boutonTexte}>Scanner un nouveau</Text>
+              <Text style={styles.boutonTexte}>Ajouter au panier</Text>
             </Pressable>
           </View>
         ) : (

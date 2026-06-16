@@ -50,7 +50,7 @@ export function PanierScreen() {
           />
         )}
         data={panier.produits}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.typeProduit.id}
         ListEmptyComponent={<Text>Aucun produit</Text>}
       />
       <ActionZone />
