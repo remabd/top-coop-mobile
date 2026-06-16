@@ -25,6 +25,7 @@ import { demandeAnnulationParticipation } from '../../api/utilisateur.api';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store/store';
 import { afficheToast } from '../../store/toastSlice';
+import { NiveauToast } from '../Toast';
 import { BlurView } from 'expo-blur';
 
 export function Participations(props: {
@@ -37,6 +38,21 @@ export function Participations(props: {
   const [choisie, choisir] =
     useState<ParticipationAvecCreneauEtCoParticipants>();
   const [tous, setTous] = useState<boolean>(false);
+
+  // DEBUG : bouton pour prévisualiser le toast
+  const niveauxToast: NiveauToast[] = ['ok', 'avertissement', 'alerte'];
+  const [indexToast, setIndexToast] = useState<number>(0);
+  function testeToast() {
+    const niveau = niveauxToast[indexToast % niveauxToast.length];
+    const messages: Record<NiveauToast, string> = {
+      ok: 'Participation annulée',
+      avertissement: "Attention, délai dépassé",
+      alerte: "Échec de l'annulation",
+    };
+    dispatch(afficheToast({ message: messages[niveau], niveau }));
+    setIndexToast((i) => i + 1);
+  }
+  // Fin DEBUG
 
   function peutannuler(
     item: ParticipationAvecCreneauEtCoParticipants
@@ -124,6 +140,11 @@ export function Participations(props: {
                 {tous ? 'Voir moins' : 'Voir plus'}
               </Text>
             </Pressable>
+            {/* DEBUG Toast */}
+            <Pressable style={styles.btnDebugToast} onPress={testeToast}>
+              <Text style={styles.btnText}>Tester le toast</Text>
+            </Pressable>
+            {/* DEBUG */}
           </>
         }
       />
@@ -259,5 +280,13 @@ const styles = StyleSheet.create({
   },
   btnOrange: {
     backgroundColor: COLORS.orange,
-  }
+  },
+  // DEBUG Toast
+  btnDebugToast: {
+    backgroundColor: COLORS.vert_fonce,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACING.md,
+    alignItems: 'center',
+    marginTop: SPACING.sm,
+  },
 });
