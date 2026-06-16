@@ -6,13 +6,17 @@ import {
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { COLORS, RADIUS, SPACING, TEXTE } from '../STYLE_CONSTS';
+import { demandeTypeProduitAvecEan } from '../api/panier.api';
+import { useDispatch, useSelector } from 'react-redux';
+import { modifiePanier, panierSelector } from '../store/panierSlice';
 
 export default function Camera() {
   const [permission, requestPermission] = useCameraPermissions();
   const [code, setCode] = useState<string | null>(null);
+  const panier = useSelector(panierSelector);
+  const dispatch = useDispatch();
 
   if (!permission) {
-    // Permissions en cours de chargement.
     return <View style={styles.container} />;
   }
 
@@ -30,13 +34,23 @@ export default function Camera() {
   }
 
   function onCodeScanne(resultat: BarcodeScanningResult) {
-    if (code) return; // déjà scanné : on ignore les déclenchements suivants
+    if (code) return;
     setCode(resultat.data);
-    // TODO: utiliser resultat.data (EAN13/EAN8), ex. recherche produit / retour navigation
   }
 
-  function valideScan() {
+  async function valideScan() {
     if (!code) return;
+
+    const response = await demandeTypeProduitAvecEan(code);
+    if (!response.ok) {
+      return;
+    }
+    dispatch(
+      modifiePanier({
+        prix: panier.prix + response.data.prix,
+        produits: [...panier.produits, response.data],
+      })
+    );
     setCode(null);
   }
 
@@ -45,8 +59,6 @@ export default function Camera() {
       <CameraView
         style={styles.camera}
         facing="back"
-        // En mettant la callback à undefined une fois un code trouvé, on met
-        // le scan en pause (onBarcodeScanned se déclenche en continu sinon).
         onBarcodeScanned={code ? undefined : onCodeScanne}
         barcodeScannerSettings={{
           barcodeTypes: ['ean13', 'ean8'],
@@ -69,9 +81,7 @@ export default function Camera() {
             </Pressable>
           </View>
         ) : (
-          <Text style={styles.consigne}>
-            Visez un code-barres EAN-13 ou EAN-8
-          </Text>
+          <Text style={styles.consigne}>Visez un code-barres</Text>
         )}
       </View>
     </View>
