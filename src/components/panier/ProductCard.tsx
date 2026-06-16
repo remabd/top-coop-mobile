@@ -1,8 +1,5 @@
 import { Button, Text, View } from 'react-native';
-import {
-  TypeProduitVersPanierProduit,
-  Unite,
-} from '../../models/panier.type';
+import { TypeProduitVersPanierProduit, Unite } from '../../models/panier.type';
 
 export function ProductCard(props: {
   produit: TypeProduitVersPanierProduit;

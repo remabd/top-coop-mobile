@@ -1,5 +1,4 @@
 import { FlatList, View, Text, Button } from 'react-native';
-import { Panier, ProduitPanier } from '../models/panier.type';
 import { useDispatch, useSelector } from 'react-redux';
 import { modifiePanier, panierSelector } from '../store/panierSlice';
 import { AppDispatch } from '../store/store';
@@ -13,23 +12,30 @@ export function PanierScreen() {
   const panier = useSelector(panierSelector);
 
   function supprimeUnProduit(id: string): void {
-    const produits = panier.produits.filter((p) => p.id !== id);
-    dispatch(modifiePanier(recalculePanier(produits)));
+    const produit = panier.produits.find((p) => p.typeProduit.id === id);
+    if (!produit) return;
+    const produitsRestants = panier.produits.filter(
+      (p) => p.typeProduit.id !== id
+    );
+    dispatch(
+      modifiePanier({
+        prix: panier.prix - produit?.prix,
+        produits: produitsRestants,
+      })
+    );
   }
 
   function modifieQuantite(id: string, quantite: number): void {
     const produits = panier.produits.map((p) =>
-      p.id === id ? { ...p, quantite } : p
+      p.typeProduit.id === id ? { ...p, quantite } : p
     );
-    dispatch(modifiePanier(recalculePanier(produits)));
-  }
-
-  function recalculePanier(produits: ProduitPanier[]): Panier {
-    return {
-      ...panier,
-      produits,
-      prix: produits.reduce((total, p) => total + p.prix * p.quantite, 0),
-    };
+    const prix = panier.produits.reduce((total, p) => total + p.prix, 0);
+    dispatch(
+      modifiePanier({
+        prix,
+        produits,
+      })
+    );
   }
 
   return (
