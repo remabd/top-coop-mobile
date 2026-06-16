@@ -23,6 +23,7 @@ export function PanierScreen() {
         produits: produitsRestants,
       })
     );
+    //TOAST ?
   }
 
   function modifieQuantite(id: string, quantite: number): void {
@@ -36,6 +37,7 @@ export function PanierScreen() {
         produits,
       })
     );
+    //TOAST ?
   }
 
   return (

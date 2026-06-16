@@ -43,14 +43,26 @@ export default function Camera() {
 
     const response = await demandeTypeProduitAvecEan(code);
     if (!response.ok) {
+      //TOAST
       return;
     }
+    const indexExistant = panier.produits.findIndex(
+      (p) => p.typeProduit.id === response.data.typeProduit.id
+    );
+    let nouveauxProduits = panier.produits;
+    if (indexExistant === -1) {
+      nouveauxProduits.push(response.data);
+    } else {
+      nouveauxProduits[indexExistant].quantite += response.data.quantite;
+    }
+
     dispatch(
       modifiePanier({
         prix: panier.prix + response.data.prix,
-        produits: [...panier.produits, response.data],
+        produits: nouveauxProduits,
       })
     );
+    //TOAST
     setCode(null);
   }
 
