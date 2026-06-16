@@ -1,6 +1,7 @@
 import { Text, View, StyleSheet } from 'react-native';
 import { ParticipationAvecCreneauEtCoParticipants } from '../../models/participation.type';
-import { COLORS, RADIUS, SPACING, TEXTE } from '../../STYLE_CONSTS';
+import { COLORS, FONT_SIZE, RADIUS, SPACING, TEXTE } from '../../STYLE_CONSTS';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export function AnnuleParticipation(props: {
   participation: ParticipationAvecCreneauEtCoParticipants;
@@ -8,8 +9,10 @@ export function AnnuleParticipation(props: {
   const participation = props.participation;
   return (
     <View>
-      <Text>Annulation</Text>
-      <Text>Voulez vous vraiment annuler ?</Text>
+      <View style={styles.entete}>
+        <Text style={TEXTE.titreModal}>Annulation</Text>
+        <Text>Souhaitez-vous vraiment annuler ?</Text>
+      </View>
       <View style={styles.creneau}>
         <Text style={styles.creneauNom}>{participation.creneau.nom}</Text>
         <Text style={styles.creneauDate}>
@@ -21,16 +24,20 @@ export function AnnuleParticipation(props: {
 }
 
 const styles = StyleSheet.create({
+  entete: {
+    paddingVertical: SPACING.md,
+    alignItems: "center",
+  },
   creneau: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: COLORS.vert_clair,
     borderRadius: RADIUS.sm,
-    paddingVertical: SPACING.md,
-    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.lg,
+    paddingHorizontal: SPACING.sm,
     marginBottom: SPACING.lg,
   },
-  creneauNom: TEXTE.corpsFort,
+  creneauNom: TEXTE.corps,
   creneauDate: TEXTE.corps,
 });

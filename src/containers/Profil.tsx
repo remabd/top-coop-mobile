@@ -18,19 +18,21 @@ import {
   chargePaniers,
   chargeParticipations,
 } from '../api/utilisateur.api';
-import { COLORS, FONTS, FONT_SIZE, RADIUS, SPACING } from '../STYLE_CONSTS';
+import { COLORS, FONTS_OUTFIT, FONTS_FIGTREE, FONT_SIZE, RADIUS, SPACING } from '../STYLE_CONSTS';
 import { UtilisateurCard } from '../components/profil/UtilisateurCard';
 import { Paniers } from '../components/profil/Paniers';
 import { Participations } from '../components/profil/Participations';
 import { Accordeon } from '../components/Accordeon';
+import type { ComponentProps } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const PREFERENCES = [
-  'Mes informations',
-  'Langues',
-  'Notifications',
-  'Thème',
-  'Signaler un problème',
-  'À propos',
+const PREFERENCES: {label: string; icone: ComponentProps<typeof MaterialCommunityIcons>["name"];}[] = [
+  { label: 'Mes informations', icone: "account-outline" },
+  { label: 'Langues', icone: "translate" },
+  { label: 'Notifications', icone: "bell-outline" },
+  { label: 'Thème', icone: "palette-outline" },
+  { label: 'Signaler un problème', icone: "alert-decagram-outline" },
+  { label: 'À propos', icone: "information-outline" },
 ];
 
 export function Profil(props: any) {
@@ -105,11 +107,13 @@ export function Profil(props: any) {
             body={
               <View>
                 {PREFERENCES.map((p) => (
-                  <Pressable key={p} style={styles.preference}>
-                    <Text style={styles.preferenceTexte}>{p}</Text>
+                  <Pressable key={p.label} style={styles.preference}>
+                    <MaterialCommunityIcons name={p.icone} size={20} color={COLORS.vert_fonce} />
+                    <Text style={styles.preferenceTexte}>{p.label}</Text>
                   </Pressable>
                 ))}
                 <Pressable style={styles.preference} onPress={deconnecte}>
+                  <MaterialCommunityIcons name="logout" size={20} color={COLORS.orange} />
                   <Text style={styles.deconnexion}>Se déconnecter</Text>
                 </Pressable>
               </View>
@@ -135,32 +139,36 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.blanc,
     borderRadius: RADIUS.lg,
     padding: SPACING.xl,
+    paddingLeft: 0,
     marginBottom: SPACING.xxl,
   },
   titre: {
-    fontFamily: FONTS.bold,
+    fontFamily: FONTS_FIGTREE.bold,
     fontSize: FONT_SIZE.titre,
     color: COLORS.orange,
     textAlign: 'center',
     marginBottom: SPACING.lg,
   },
   erreur: {
-    fontFamily: FONTS.semibold,
+    fontFamily: FONTS_FIGTREE.semibold,
     fontSize: FONT_SIZE.sm,
     color: COLORS.erreur,
     textAlign: 'center',
     marginBottom: SPACING.lg,
   },
   preference: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
     paddingVertical: 7,
   },
   preferenceTexte: {
-    fontFamily: FONTS.regular,
+    fontFamily: FONTS_FIGTREE.regular,
     fontSize: FONT_SIZE.md,
     color: COLORS.texte,
   },
   deconnexion: {
-    fontFamily: FONTS.semibold,
+    fontFamily: FONTS_FIGTREE.semibold,
     fontSize: FONT_SIZE.md,
     color: COLORS.orange,
   },
