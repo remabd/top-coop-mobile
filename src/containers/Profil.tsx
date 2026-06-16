@@ -18,7 +18,7 @@ import {
   chargePaniers,
   chargeParticipations,
 } from '../api/utilisateur.api';
-import { COLORS, FONTS_OUTFIT, FONTS_FIGTREE, FONT_SIZE, RADIUS, SPACING } from '../STYLE_CONSTS';
+import { COLORS, FONTS_FIGTREE, FONT_SIZE, RADIUS, SPACING } from '../STYLE_CONSTS';
 import { UtilisateurCard } from '../components/profil/UtilisateurCard';
 import { Paniers } from '../components/profil/Paniers';
 import { Participations } from '../components/profil/Participations';

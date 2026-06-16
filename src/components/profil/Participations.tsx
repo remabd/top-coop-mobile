@@ -259,5 +259,5 @@ const styles = StyleSheet.create({
   },
   btnOrange: {
     backgroundColor: COLORS.orange,
-  }
+  },
 });

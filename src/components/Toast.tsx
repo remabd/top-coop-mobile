@@ -62,9 +62,9 @@ export function Toast(props: {
     };
   }, [props.message]);
 
-  const translateY = apparition.interpolate({
+  const translateX = apparition.interpolate({
     inputRange: [0, 1],
-    outputRange: [-120, 0],
+    outputRange: [400, 0],
   });
   const largeurBarre = progression.interpolate({
     inputRange: [0, 1],
@@ -74,8 +74,8 @@ export function Toast(props: {
   return (
     <Animated.View
       style={[
-        styles.ombre,
-        { opacity: apparition, transform: [{ translateY }] },
+        styles.position,
+        { opacity: apparition, transform: [{ translateX }] },
       ]}
       pointerEvents="none"
     >
@@ -103,21 +103,21 @@ export function Toast(props: {
 }
 
 const styles = StyleSheet.create({
-  ombre: {
+  position: {
     position: 'absolute',
     top: 50,
     left: SPACING.xl,
     right: SPACING.xl,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
   },
   carte: {
     backgroundColor: COLORS.blanc,
     borderRadius: RADIUS.lg,
     overflow: 'hidden',
+    elevation: 8,
+    shadowColor: "rgba(0,0,0,0.5",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
   },
   pisteBarre: {
     height: 4,
