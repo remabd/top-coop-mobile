@@ -1,8 +1,12 @@
 import { api, request } from './client';
 import { loadToken } from '../store/securetoken';
-import { Panier, TypeProduitVersPanierProduit } from '../models/panier.type';
+import {
+  ObjetVersPanier,
+  Panier,
+  TypeProduitVersPanierProduit,
+} from '../models/panier.type';
 
-export async function demandeValidationPanier(panier: Panier) {
+export async function demandeValidationPanier(panier: ObjetVersPanier) {
   const token = await loadToken();
   return request<Panier>(
     api.post('/panier', panier, {

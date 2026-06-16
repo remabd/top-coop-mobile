@@ -46,22 +46,26 @@ export default function Camera() {
       //TOAST
       return;
     }
+    console.log(response.data);
     const indexExistant = panier.produits.findIndex(
       (p) => p.typeProduit.id === response.data.typeProduit.id
     );
-    let nouveauxProduits = panier.produits;
-    if (indexExistant === -1) {
-      nouveauxProduits.push(response.data);
-    } else {
-      nouveauxProduits[indexExistant].quantite += response.data.quantite;
-    }
 
+    const nouveauxProduits =
+      indexExistant === -1
+        ? [...panier.produits, response.data]
+        : panier.produits.map((p, i) =>
+            i === indexExistant
+              ? { ...p, quantite: p.quantite + response.data.quantite }
+              : p
+          );
     dispatch(
       modifiePanier({
         prix: panier.prix + response.data.prix,
         produits: nouveauxProduits,
       })
     );
+
     //TOAST
     setCode(null);
   }

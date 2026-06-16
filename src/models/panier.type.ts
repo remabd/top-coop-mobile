@@ -57,6 +57,6 @@ export interface ProduitAvecType {
 }
 
 export enum Unite {
-  VRAC,
-  UNITE,
+  VRAC = 'VRAC',
+  UNITE = 'UNITE',
 }

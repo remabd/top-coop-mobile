@@ -2,12 +2,21 @@ import { Button, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { panierSelector } from '../../store/panierSlice';
 import { useNavigation } from '@react-navigation/native';
+import { demandeValidationPanier } from '../../api/panier.api';
 
 export function ActionZone() {
   const panier = useSelector(panierSelector);
   const navigation = useNavigation<any>();
 
-  function validePanier() {}
+  async function validePanier() {
+    const response = await demandeValidationPanier(panier);
+    if (!response.ok) {
+      //TODO TOAS
+      return;
+    }
+    //TODO TOAST
+  }
+
   return (
     <View>
       <View>
