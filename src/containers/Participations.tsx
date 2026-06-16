@@ -8,6 +8,8 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import GestureRecognizer from "react-native-swipe-gestures"; // Import du détecteur de gestes
 import { loadToken } from "../store/securetoken"; 
 
 interface Creneau {
@@ -31,6 +33,10 @@ interface Utilisateur {
   prenom: string;
 }
 
+const COLORS = {
+  texte: "#2C2C2C",
+};
+
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://10.12.164.51:3002"; 
 
 export function Participations() {
@@ -53,7 +59,6 @@ export function Participations() {
       const t = await loadToken();
       setToken(t);
       if (t) {
-        // Chargement parallèle de toutes les données nécessaires
         await Promise.all([
           fetchCreneaux(t),
           fetchParticipations(t),
@@ -72,7 +77,8 @@ export function Participations() {
         headers: { Authorization: `Bearer ${authToken}`, "Content-Type": "application/json" },
       });
       const data = await response.json();
-      setCreneaux(Array.isArray(data) ? data : data.data || []);
+      const liste = Array.isArray(data) ? data : (data.data || []);
+      setCreneaux(liste);
     } catch (error) {
       console.error("Erreur récupération créneaux:", error);
     }
@@ -85,7 +91,8 @@ export function Participations() {
         headers: { Authorization: `Bearer ${authToken}`, "Content-Type": "application/json" },
       });
       const data = await response.json();
-      setParticipations(Array.isArray(data) ? data : data.data || []);
+      const liste = Array.isArray(data) ? data : (data.data || []);
+      setParticipations(liste);
     } catch (error) {
       console.error("Erreur récupération participations:", error);
     }
@@ -98,13 +105,13 @@ export function Participations() {
         headers: { Authorization: `Bearer ${authToken}`, "Content-Type": "application/json" },
       });
       const data = await response.json();
-      setUtilisateurs(Array.isArray(data) ? data : data.data || []);
+      const liste = Array.isArray(data) ? data : (data.data || []);
+      setUtilisateurs(liste);
     } catch (error) {
       console.error("Erreur récupération utilisateurs:", error);
     }
   };
 
-  // Récupérer la liste textuelle des participants inscrits à un créneau spécifique
   const getParticipantsForCreneau = (creneauId: string): string[] => {
     return participations
       .filter((p) => p.creneauId === creneauId)
@@ -136,6 +143,13 @@ export function Participations() {
   const formatDateNumerique = (dateStr: string): string => {
     const d = new Date(dateStr);
     return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  };
+
+  const formatHeureMinute = (dateStr: string | Date): string => {
+    const d = new Date(dateStr);
+    const heures = d.getHours();
+    const minutes = d.getMinutes();
+    return minutes > 0 ? `${heures}h${String(minutes).padStart(2, '0')}` : `${heures}h`;
   };
 
   const handleToggleCreneau = (creneauId: string) => {
@@ -171,7 +185,7 @@ export function Participations() {
       setSelectedCreneauIds([]);
       setIsModalVisible(false);
       alert("Réservation(s) validée(s) avec succès !");
-      await fetchParticipations(token); // Rafraîchit les listes d'inscrits en arrière-plan
+      await fetchParticipations(token); 
     } catch (error) {
       console.error("Erreur lors de la réservation :", error);
       alert("Une erreur est survenue lors de la validation.");
@@ -180,11 +194,9 @@ export function Participations() {
     }
   };
 
-  // --- LOGIQUE MAJEURE : FUSION ET RENDU DES CRÉNEAUX SANS DUPLICATION ---
   const renderCreneauxDuJour = () => {
     if (!creneaux || !Array.isArray(creneaux)) return null;
 
-    // 1. Filtrer les créneaux uniques qui se déroulent sur la journée sélectionnée
     const creneauxDuJour = creneaux.filter((c) => {
       if (!c || !c.dateDebut) return false;
       const dateDebut = new Date(c.dateDebut);
@@ -195,61 +207,39 @@ export function Participations() {
       );
     });
 
-    // 2. Construire un planning complet heure par heure de 0h à 23h
-    const timeline = [];
-    let hour = 0;
-
-    while (hour < 24) {
-      // Regarder si un créneau englobe l'heure actuelle de la boucle
-      const currentHour = hour; 
-      const creneauTrouve = creneauxDuJour.find((c) => {
-        const hDeb = new Date(c.dateDebut).getHours();
-        const hFin = new Date(c.dateFin).getHours();
-        return currentHour >= hDeb && currentHour < hFin;
-      });
-
-      if (creneauTrouve) {
-        const hDeb = new Date(creneauTrouve.dateDebut).getHours();
-        const hFin = new Date(creneauTrouve.dateFin).getHours();
-        const duration = hFin - hDeb; // Nombre d'heures de s'étalement
-        const isSelected = selectedCreneauIds.includes(creneauTrouve.id);
-
-        // On insère UN SEUL bloc fusionné pour toute la durée de l'activité !
-        timeline.push(
-          <TouchableOpacity
-            key={creneauTrouve.id}
-            onPress={() => handleToggleCreneau(creneauTrouve.id)}
-            style={[
-              styles.slotRow,
-              styles.slotActive,
-              isSelected && styles.slotSelected,
-              { paddingVertical: 14 + (duration - 1) * 10 } // Agrandit légèrement le bloc visuellement s'il est long
-            ]}
-          >
-            <Text style={styles.hourText}>{hDeb}h</Text>
-            <Text style={[styles.activityText, isSelected && styles.selectedText]}>
-              {creneauTrouve.nom}
-            </Text>
-            <Text style={styles.hourText}>{hFin}h</Text>
-          </TouchableOpacity>
-        );
-
-        // On fait avancer la boucle directement à la fin du créneau pour éviter les doublons
-        hour = hFin;
-      } else {
-        // Ligne vide standard (1h par ligne)
-        timeline.push(
-          <View key={`empty-${hour}`} style={[styles.slotRow, styles.slotEmpty]}>
-            <Text style={[styles.hourText, styles.disabledText]}>{hour}h</Text>
-            <Text style={[styles.activityText, styles.disabledText]}>{"Nom de l'activité"}</Text>
-            <Text style={[styles.hourText, styles.disabledText]}>{hour + 1}h</Text>
-          </View>
-        );
-        hour++;
-      }
+    if (creneauxDuJour.length === 0) {
+      return (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Aucun créneau disponible pour ce jour</Text>
+        </View>
+      );
     }
 
-    return timeline;
+    creneauxDuJour.sort((a, b) => new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime());
+
+    return creneauxDuJour.map((creneau) => {
+      const isSelected = selectedCreneauIds.includes(creneau.id);
+      const dateDeb = new Date(creneau.dateDebut);
+      const dateFin = new Date(creneau.dateFin);
+
+      return (
+        <TouchableOpacity
+          key={creneau.id}
+          onPress={() => handleToggleCreneau(creneau.id)}
+          style={[
+            styles.slotRow,
+            styles.slotActive,
+            isSelected && styles.slotSelected,
+          ]}
+        >
+          <Text style={styles.hourText}>{formatHeureMinute(dateDeb)}</Text>
+          <Text style={[styles.activityText, isSelected && styles.selectedText]}>
+            {creneau.nom}
+          </Text>
+          <Text style={styles.hourText}>{formatHeureMinute(dateFin)}</Text>
+        </TouchableOpacity>
+      );
+    });
   };
 
   if (loading) {
@@ -259,6 +249,12 @@ export function Participations() {
       </View>
     );
   }
+
+  // Sensibilité accrue : déclenchement plus facile
+  const swipeConfig = {
+    velocityThreshold: 0.005,
+    directionalOffsetThreshold: 80,
+  };
 
   return (
     <View style={styles.container}>
@@ -284,12 +280,25 @@ export function Participations() {
         </TouchableOpacity>
       </View>
 
-      {/* --- TIMELINE DE CRÉNEAUX FUSIONNÉS --- */}
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {renderCreneauxDuJour()}
-      </ScrollView>
+      {/* --- ENVELOPPE DU CONTENU AVEC DÉTECTION DE SWIPE --- */}
+      <GestureRecognizer
+        onSwipeLeft={handleNextDay}      // Swipe vers la gauche = Jour Suivant
+        onSwipeRight={handlePreviousDay}  // Swipe vers la droite = Jour Précédent
+        config={swipeConfig}
+        style={{ flex: 1, width: '100%', borderColor: "red", borderWidth: 2 }} // Styles explicites ajoutés ici
+      >
+        {/* On s'assure que le ScrollView laisse le conteneur parent capter les gestes horizontaux */}
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer}
+          directionalLockEnabled={true} 
+        >
+          {renderCreneauxDuJour()}
+        </ScrollView>
+      </GestureRecognizer>
+      
+      {/* ... (Reste du code avec le bouton flottant et la modal identique) ... */}
 
-      {/* --- BOUTON FLOTTANT RÉSERVER --- */}
+      {/* --- BOUTON FLOTTANT --- */}
       {selectedCreneauIds.length > 0 && (
         <TouchableOpacity
           style={styles.floatingButton}
@@ -299,7 +308,7 @@ export function Participations() {
         </TouchableOpacity>
       )}
 
-      {/* --- MODAL RÉCAPITULATIF REFAITE ET SÉCURISÉE --- */}
+      {/* --- MODAL --- */}
       <Modal
         visible={isModalVisible}
         transparent={true}
@@ -312,28 +321,29 @@ export function Participations() {
             <Text style={styles.modalSubtitle}>Vous avez choisi le(s) créneau(x) suivants :</Text>
 
             <ScrollView style={{ maxHeight: 280, width: "100%", marginBottom: 20 }}>
-              {selectedCreneauIds.map((id) => {
+              {selectedCreneauIds.map((id, idx) => {
                 if (!creneaux || !Array.isArray(creneaux)) return null;
 
                 const c = creneaux.find((item) => item.id === id);
                 if (!c) return null;
                 
                 const isExpanded = expandedRecapIds.includes(id);
-                const heureDeb = new Date(c.dateDebut).getHours();
-                const heureFin = new Date(c.dateFin).getHours();
-                
-                // Récupération dynamique des participants réels
                 const listeParticipants = getParticipantsForCreneau(c.id);
 
                 return (
-                  <View key={id} style={styles.recapCardContainer}>
+                  <View key={`recap-${id}`} style={styles.recapCardContainer}>
                     <TouchableOpacity 
                       style={styles.recapHeaderRow} 
                       onPress={() => toggleExpandRecap(id)}
                     >
-                      <Text style={styles.arrowIcon}>{isExpanded ? "🔽" : "▶️"}</Text>
+                      <MaterialIcons
+                        name={isExpanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
+                        size={18}
+                        color={COLORS.texte}
+                        style={styles.arrowIcon}
+                      />
                       <Text style={styles.recapCardTitle}>
-                        {c.nom} de {heureDeb}h à {heureFin}h le {formatDateNumerique(c.dateDebut)}
+                        {c.nom} de {formatHeureMinute(c.dateDebut)} à {formatHeureMinute(c.dateFin)} le {formatDateNumerique(c.dateDebut)}
                       </Text>
                     </TouchableOpacity>
                     
@@ -342,7 +352,7 @@ export function Participations() {
                         <Text style={styles.recapCardLabel}>Participants inscrits :</Text>
                         {listeParticipants.length > 0 ? (
                           listeParticipants.map((nomParticipant, index) => (
-                            <Text key={index} style={styles.recapCardUser}>
+                            <Text key={`part-${id}-${index}`} style={styles.recapCardUser}>
                               • {nomParticipant}
                             </Text>
                           ))
@@ -396,14 +406,14 @@ const styles = StyleSheet.create({
   dateText: { fontFamily: "Outfit_700Bold", fontSize: 18, color: "#2C2C2C" },
   arrow: { fontSize: 22, fontWeight: "bold", color: "#2C2C2C", paddingHorizontal: 10 },
   scrollContainer: { paddingHorizontal: 15, paddingBottom: 100 },
-  slotRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 14, paddingHorizontal: 15, borderRadius: 4, marginBottom: 8 },
-  slotEmpty: { backgroundColor: "#EBEBEB" },
+  slotRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 16, paddingHorizontal: 15, borderRadius: 4, marginBottom: 8 },
   slotActive: { backgroundColor: "#D6EBD3" },
   slotSelected: { backgroundColor: "#A8D4A3" },
-  hourText: { fontFamily: "Outfit_600SemiBold", fontSize: 14, color: "#000", width: 35 },
+  hourText: { fontFamily: "Outfit_600SemiBold", fontSize: 14, color: "#000", width: 48 },
   activityText: { fontFamily: "Outfit_400Regular", fontSize: 15, color: "#333", flex: 1, textAlign: "center" },
   selectedText: { fontFamily: "Outfit_600SemiBold" },
-  disabledText: { color: "#BFBFBF" },
+  emptyContainer: { alignItems: "center", justifyContent: "center", marginTop: 40, paddingHorizontal: 20 },
+  emptyText: { fontFamily: "Outfit_400Regular", fontSize: 16, color: "#888", textAlign: "center", fontStyle: "italic" },
   floatingButton: { position: "absolute", bottom: 30, left: "15%", right: "15%", backgroundColor: "#D4833B", paddingVertical: 15, borderRadius: 8, alignItems: "center", elevation: 4 },
   floatingButtonText: { fontFamily: "Outfit_700Bold", color: "#FFF", fontSize: 16 },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "center", alignItems: "center" },
@@ -412,7 +422,7 @@ const styles = StyleSheet.create({
   modalSubtitle: { fontFamily: "Outfit_400Regular", fontSize: 14, color: "#4A4A4A", textAlign: "center", marginBottom: 20 },
   recapCardContainer: { backgroundColor: "#D6EBD3", borderRadius: 8, marginBottom: 10, width: "100%", overflow: "hidden" },
   recapHeaderRow: { flexDirection: "row", alignItems: "center", padding: 12 },
-  arrowIcon: { fontSize: 14, fontWeight: "bold", marginRight: 6, color: "#2C2C2C" },
+  arrowIcon: { marginRight: 8 }, 
   recapCardTitle: { fontFamily: "Outfit_400Regular", fontSize: 14, color: "#2C2C2C", flex: 1 },
   recapCardDetails: { backgroundColor: "rgba(255, 255, 255, 0.4)", paddingHorizontal: 12, paddingVertical: 10, borderTopWidth: 0.5, borderTopColor: "#B5D6B1" },
   recapCardLabel: { fontFamily: "Outfit_400Regular", fontSize: 12, color: "#555", marginBottom: 4 },
