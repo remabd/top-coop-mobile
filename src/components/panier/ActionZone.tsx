@@ -1,16 +1,18 @@
 import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useSelector } from 'react-redux';
-import { panierSelector } from '../../store/panierSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { modifiePanier, panierSelector } from '../../store/panierSlice';
 import { useNavigation } from '@react-navigation/native';
 import { demandeValidationPanier } from '../../api/panier.api';
 import { COLORS, RADIUS, SPACING, TEXTE } from '../../STYLE_CONSTS';
 import { DtoVersPanierUtilisateur } from '../../models/panier.type';
+import { afficheToast } from '../../store/toastSlice';
 
 export function ActionZone() {
   const panier = useSelector(panierSelector);
   const navigation = useNavigation<any>();
   const panierVide = panier.produits.length === 0;
+  const dispatch = useDispatch();
 
   async function validePanier() {
     const data: DtoVersPanierUtilisateur = {
@@ -25,10 +27,20 @@ export function ActionZone() {
     });
     const response = await demandeValidationPanier(data);
     if (!response.ok) {
-      //TODO TOAS
-      return;
+      dispatch(
+        afficheToast({
+          message: 'Échec de la création du panier',
+          niveau: 'alerte',
+        })
+      );
     }
-    //TODO TOAST
+    dispatch(afficheToast({ message: 'Panier enregistré', niveau: 'ok' }));
+    dispatch(
+      modifiePanier({
+        prix: 0,
+        produits: [],
+      })
+    );
   }
 
   return (
