@@ -7,16 +7,22 @@ export const COLORS = {
   orange: '#CE8536',
   erreur: '#C0392B',
   blanc: '#FFFFFF',
-  texte: '#333333',
+  texte: '#3C3C3C',
   placeholder: '#6B6B6B',
   avatar: '#D9D9D9',
   bordure: '#D7D7D7',
 };
 
-export const FONTS = {
+export const FONTS_OUTFIT = {
   regular: 'Outfit_400Regular',
   semibold: 'Outfit_600SemiBold',
   bold: 'Outfit_700Bold',
+} as const;
+
+export const FONTS_FIGTREE = {
+  regular: 'Figtree_400Regular',
+  semibold: 'Figtree_600SemiBold',
+  bold: 'Figtree_700Bold',
 } as const;
 
 export const FONT_SIZE = {
@@ -25,6 +31,8 @@ export const FONT_SIZE = {
   lg: 15,
   xl: 16,
   titre: 22,
+  titreH2: 20,
+  titreH3: 18,
   titreXl: 26,
 } as const;
 
@@ -45,28 +53,34 @@ export const RADIUS = {
 
 export const TEXTE = StyleSheet.create({
   corps: {
-    fontFamily: FONTS.regular,
-    fontSize: FONT_SIZE.sm,
+    fontFamily: FONTS_FIGTREE.regular,
+    fontSize: FONT_SIZE.xl,
+    color: COLORS.texte,
+  },
+  corpsSmall: {
+    fontFamily: FONTS_FIGTREE.regular,
+    fontSize: FONT_SIZE.md,
     color: COLORS.texte,
   },
   corpsFort: {
-    fontFamily: FONTS.semibold,
-    fontSize: FONT_SIZE.sm,
+    fontFamily: FONTS_FIGTREE.bold,
+    fontSize: FONT_SIZE.xl,
     color: COLORS.texte,
   },
   discret: {
-    fontFamily: FONTS.regular,
+    fontFamily: FONTS_FIGTREE.regular,
     fontSize: FONT_SIZE.sm,
     color: COLORS.placeholder,
   },
   titreSection: {
-    fontFamily: FONTS.bold,
+    fontFamily: FONTS_OUTFIT.bold,
     fontSize: FONT_SIZE.lg,
     color: COLORS.texte,
   },
   titreModal: {
-    fontFamily: FONTS.bold,
-    fontSize: FONT_SIZE.xl,
-    color: COLORS.texte,
+    fontFamily: FONTS_OUTFIT.bold,
+    fontSize: FONT_SIZE.titreH3,
+    color: COLORS.orange,
+    textAlign: 'center',
   },
 });
