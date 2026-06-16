@@ -105,7 +105,7 @@ export function Toast(props: {
 const styles = StyleSheet.create({
   position: {
     position: 'absolute',
-    bottom: 50,
+    top: 50,
     left: SPACING.xl,
     right: SPACING.xl,
   },
