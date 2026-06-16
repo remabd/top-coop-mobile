@@ -6,6 +6,7 @@ import {
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { COLORS, RADIUS, SPACING, TEXTE } from '../STYLE_CONSTS';
 import { demandeTypeProduitAvecEan } from '../api/panier.api';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +17,7 @@ export default function Camera() {
   const [code, setCode] = useState<string | null>(null);
   const panier = useSelector(panierSelector);
   const dispatch = useDispatch();
+  const navigation = useNavigation<any>();
 
   if (!permission) {
     return <View style={styles.container} />;
@@ -81,6 +83,14 @@ export default function Camera() {
         }}
       />
 
+      <Pressable
+        style={styles.retour}
+        onPress={() => navigation.goBack()}
+        hitSlop={8}
+      >
+        <MaterialIcons name="arrow-back" size={26} color={COLORS.blanc} />
+      </Pressable>
+
       {/* Cadre de visée */}
       <View style={styles.calque} pointerEvents="box-none">
         <View style={styles.cadre} />
@@ -124,6 +134,17 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+  },
+  retour: {
+    position: 'absolute',
+    top: 50,
+    left: SPACING.xl,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   calque: {
     ...StyleSheet.absoluteFillObject,
