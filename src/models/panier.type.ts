@@ -11,6 +11,16 @@ export interface ObjetVersPanier {
   produits: TypeProduitVersPanierProduit[];
 }
 
+export interface DtoVersProduitPanierUtilisateur {
+  typeProduitId: string;
+  quantite: number;
+}
+
+export interface DtoVersPanierUtilisateur {
+  prix: number;
+  produits: DtoVersProduitPanierUtilisateur[];
+}
+
 export interface TypeProduitVersPanierProduit {
   typeProduit: TypeProduit;
   quantite: number;

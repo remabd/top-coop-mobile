@@ -1,15 +1,17 @@
 import { api, request } from './client';
 import { loadToken } from '../store/securetoken';
 import {
-  ObjetVersPanier,
+  DtoVersPanierUtilisateur,
   Panier,
   TypeProduitVersPanierProduit,
 } from '../models/panier.type';
 
-export async function demandeValidationPanier(panier: ObjetVersPanier) {
+export async function demandeValidationPanier(
+  panier: DtoVersPanierUtilisateur
+) {
   const token = await loadToken();
   return request<Panier>(
-    api.post('/panier', panier, {
+    api.post('/panier/utilisateur', panier, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -5,6 +5,7 @@ import {
 } from 'expo-camera';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS, RADIUS, SPACING, TEXTE } from '../STYLE_CONSTS';
 import { demandeTypeProduitAvecEan } from '../api/panier.api';
 import { useDispatch, useSelector } from 'react-redux';
@@ -46,7 +47,6 @@ export default function Camera() {
       //TOAST
       return;
     }
-    console.log(response.data);
     const indexExistant = panier.produits.findIndex(
       (p) => p.typeProduit.id === response.data.typeProduit.id
     );
@@ -89,12 +89,20 @@ export default function Camera() {
           <View style={styles.resultat}>
             <Text style={styles.resultatLabel}>Code scanné</Text>
             <Text style={styles.resultatCode}>{code}</Text>
-            <Pressable style={styles.bouton} onPress={() => setCode(null)}>
-              <Text style={styles.boutonTexte}>Scanner à nouveau</Text>
-            </Pressable>
-            <Pressable style={styles.bouton} onPress={() => valideScan()}>
-              <Text style={styles.boutonTexte}>Ajouter au panier</Text>
-            </Pressable>
+            <View style={styles.boutons}>
+              <Pressable
+                style={[styles.bouton, styles.boutonRescan]}
+                onPress={() => setCode(null)}
+              >
+                <MaterialIcons name="replay" size={22} color={COLORS.blanc} />
+              </Pressable>
+              <Pressable
+                style={[styles.bouton, styles.boutonAjouter]}
+                onPress={() => valideScan()}
+              >
+                <Text style={styles.boutonTexte}>Suivant</Text>
+              </Pressable>
+            </View>
           </View>
         ) : (
           <Text style={styles.consigne}>Visez un code-barres</Text>
@@ -154,12 +162,24 @@ const styles = StyleSheet.create({
     ...TEXTE.titreModal,
     marginBottom: SPACING.md,
   },
+  boutons: {
+    flexDirection: 'row',
+    gap: SPACING.sm,
+    marginTop: SPACING.md,
+  },
   bouton: {
     backgroundColor: COLORS.vert_fonce,
     borderRadius: RADIUS.sm,
     paddingVertical: SPACING.md,
-    paddingHorizontal: SPACING.xl,
+    paddingHorizontal: SPACING.xxl,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  boutonRescan: {
+    paddingHorizontal: SPACING.md,
+  },
+  boutonAjouter: {
+    backgroundColor: COLORS.orange,
   },
   boutonTexte: {
     fontFamily: TEXTE.corpsFort.fontFamily,
