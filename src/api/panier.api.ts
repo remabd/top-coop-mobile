@@ -1,25 +1,31 @@
-import axios from 'axios';
-import { Panier } from '../models/panier.type';
+import { api, request } from './client';
+import { loadToken } from '../store/securetoken';
+import {
+  DtoVersPanierUtilisateur,
+  Panier,
+  TypeProduitVersPanierProduit,
+} from '../models/panier.type';
 
-export class PanierApi {
-  private token: string;
-  private baseUrl: string;
-  constructor() {
-    this.token = '';
-    this.baseUrl = process.env.EXPO_PUBLIC_API_URL + '/panier';
-  }
+export async function demandeValidationPanier(
+  panier: DtoVersPanierUtilisateur
+) {
+  const token = await loadToken();
+  return request<Panier>(
+    api.post('/panier/utilisateur', panier, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  );
+}
 
-  public async validePanier(panier: Panier) {
-    try {
-      const response = await axios.post<Panier>('/', panier, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.token}`,
-        },
-      });
-      return response;
-    } catch (e) {
-      console.log(e);
-    }
-  }
+export async function demandeTypeProduitAvecEan(ean: string) {
+  const token = await loadToken();
+  return request<TypeProduitVersPanierProduit>(
+    api.get('/type-produit/par-ean/' + ean, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  );
 }

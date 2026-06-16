@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Panier } from '../models/panier.type';
+import { ObjetVersPanier } from '../models/panier.type';
 import { RootState } from './store';
 
 interface PanierState {
-  value: Panier;
+  value: ObjetVersPanier;
 }
 
 const initialState: PanierState = {
@@ -17,7 +17,7 @@ const panierSlice = createSlice({
   name: 'panier',
   initialState,
   reducers: {
-    modifiePanier: (state, action: PayloadAction<Panier>) => {
+    modifiePanier: (state, action: PayloadAction<ObjetVersPanier>) => {
       state.value = action.payload;
     },
   },

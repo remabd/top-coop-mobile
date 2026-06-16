@@ -24,6 +24,7 @@ import {
   Outfit_600SemiBold,
   Outfit_700Bold,
 } from '@expo-google-fonts/outfit';
+import Camera from './src/containers/Camera';
 import {
   Figtree_400Regular,
   Figtree_600SemiBold,
@@ -77,6 +78,7 @@ function Root() {
           <>
             <Stack.Screen name="tabs" component={BottomNav} />
             <Stack.Screen name="catalogue" component={Catalogue} />
+            <Stack.Screen name="camera" component={Camera} />
           </>
         ) : (
           <Stack.Screen name="connexion" component={Connexion} />
