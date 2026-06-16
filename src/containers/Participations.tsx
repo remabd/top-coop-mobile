@@ -10,7 +10,9 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import GestureRecognizer from "react-native-swipe-gestures";
+import { useNavigation } from "@react-navigation/native";
 import { loadToken } from "../store/securetoken"; 
+import { Toast, NiveauToast } from "../components/Toast"; // Aligne le chemin selon ton architecture
 
 interface Creneau {
   id: string;
@@ -22,9 +24,10 @@ interface Creneau {
 }
 
 interface Participation {
-  id: string;
+  id?: string;
   utilisateurId: string;
   creneauId: string;
+  dateCreation?: string;
 }
 
 interface Utilisateur {
@@ -39,7 +42,30 @@ const COLORS = {
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://10.12.164.51:3002"; 
 
+/**
+ * Fonction utilitaire native pour décoder la charge utile (payload) d'un jeton JWT
+ */
+function decodeJwt(token: string): any {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    
+    // Décodage compatible environnement JavaScript / React Native
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error("Erreur lors du décodage du JWT :", error);
+    return null;
+  }
+}
+
 export function Participations() {
+  const navigation = useNavigation<any>();
   const [token, setToken] = useState<string | null>(null);
   const [creneaux, setCreneaux] = useState<Creneau[]>([]);
   const [participations, setParticipations] = useState<Participation[]>([]);
@@ -52,13 +78,25 @@ export function Participations() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const currentUserId = "user-id-dynamique-depuis-redux"; 
+  // État de gestion pour ton composant Toast personnalisé
+  const [toastConfig, setToastConfig] = useState<{ message: string; niveau: NiveauToast } | null>(null);
+
+  // ID utilisateur dynamique extrait du Token
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {
     async function init() {
       const t = await loadToken();
       setToken(t);
       if (t) {
+        // Décodage du token pour récupérer l'ID réel de l'utilisateur connecté
+        const decoded = decodeJwt(t);
+        if (decoded) {
+          // NestJS utilise généralement .id ou .sub (subject) dans sa stratégie JWT
+          const userId = decoded.id || decoded.sub || decoded.userId;
+          setCurrentUserId(userId || null);
+        }
+
         await Promise.all([
           fetchCreneaux(t),
           fetchParticipations(t),
@@ -168,30 +206,67 @@ export function Participations() {
     );
   };
 
+  /**
+   * Envoi des requêtes POST d'ajout de participations avec l'ID utilisateur connecté
+   */
   const handleValiderReservations = async () => {
-    if (!token) return;
+    if (!token || !currentUserId) {
+      setToastConfig({
+        message: "Session utilisateur introuvable. Veuillez vous reconnecter.",
+        niveau: "alerte"
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
+      // Envoi des requêtes POST parallélisées avec l'identifiant dynamique validé
       const promises = selectedCreneauIds.map((id) =>
         fetch(`${API_BASE_URL}/participation`, {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ utilisateurId: currentUserId, creneauId: id }),
+          headers: { 
+            "Authorization": `Bearer ${token}`, 
+            "Content-Type": "application/json" 
+          },
+          body: JSON.stringify({ 
+            utilisateurId: currentUserId, 
+            creneauId: id 
+          }),
+        }).then(async (res) => {
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.message || "Erreur lors de l'enregistrement de la participation.");
+          }
+          return res.json();
         })
       );
 
       await Promise.all(promises);
+      
       setSelectedCreneauIds([]);
       setIsModalVisible(false);
-      alert("Réservation(s) validée(s) avec succès !");
+      
+      setToastConfig({
+        message: "Votre participation a bien été enregistrée !",
+        niveau: "ok"
+      });
+
+      // Actualisation dynamique du calendrier et des participants inscrits
       await fetchParticipations(token); 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erreur lors de la réservation :", error);
-      alert("Une erreur est survenue lors de la validation.");
+      setToastConfig({
+        message: error.message || "Une erreur est survenue lors de la validation.",
+        niveau: "alerte"
+      });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleGoToProfilParticipations = () => {
+    navigation.navigate("profil", { openSection: "Mes participations" });
   };
 
   const renderCreneauxDuJour = () => {
@@ -250,10 +325,9 @@ export function Participations() {
     );
   }
 
-  // Sensibilité accrue : déclenchement plus facile
   const swipeConfig = {
-    velocityThreshold: 0.005,
-    directionalOffsetThreshold: 80,
+    velocityThreshold: 0.1,
+    directionalOffsetThreshold: 150,
   };
 
   return (
@@ -264,7 +338,7 @@ export function Participations() {
         <Text style={styles.subtitlePage}>
           Vous avez <Text style={{ fontWeight: "bold" }}>Xh</Text> à réaliser ce mois-ci.
         </Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleGoToProfilParticipations}>
           <Text style={styles.linkText}>Voir mes participations</Text>
         </TouchableOpacity>
       </View>
@@ -280,23 +354,17 @@ export function Participations() {
         </TouchableOpacity>
       </View>
 
-      {/* --- ENVELOPPE DU CONTENU AVEC DÉTECTION DE SWIPE --- */}
+      {/* --- ZONE SWIPABLE --- */}
       <GestureRecognizer
-        onSwipeLeft={handleNextDay}      // Swipe vers la gauche = Jour Suivant
-        onSwipeRight={handlePreviousDay}  // Swipe vers la droite = Jour Précédent
+        onSwipeLeft={handleNextDay}
+        onSwipeRight={handlePreviousDay}
         config={swipeConfig}
-        style={{ flex: 1, width: '100%'}} // Styles explicites ajoutés ici
+        style={styles.swipeZone}
       >
-        {/* On s'assure que le ScrollView laisse le conteneur parent capter les gestes horizontaux */}
-        <ScrollView 
-          contentContainerStyle={styles.scrollContainer}
-          directionalLockEnabled={true} 
-        >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
           {renderCreneauxDuJour()}
         </ScrollView>
       </GestureRecognizer>
-      
-      {/* ... (Reste du code avec le bouton flottant et la modal identique) ... */}
 
       {/* --- BOUTON FLOTTANT --- */}
       {selectedCreneauIds.length > 0 && (
@@ -321,7 +389,7 @@ export function Participations() {
             <Text style={styles.modalSubtitle}>Vous avez choisi le(s) créneau(x) suivants :</Text>
 
             <ScrollView style={{ maxHeight: 280, width: "100%", marginBottom: 20 }}>
-              {selectedCreneauIds.map((id, idx) => {
+              {selectedCreneauIds.map((id) => {
                 if (!creneaux || !Array.isArray(creneaux)) return null;
 
                 const c = creneaux.find((item) => item.id === id);
@@ -391,6 +459,15 @@ export function Participations() {
           </View>
         </View>
       </Modal>
+
+      {/* --- RENDER TOAST GLOBAL --- */}
+      {toastConfig && (
+        <Toast 
+          message={toastConfig.message}
+          niveau={toastConfig.niveau}
+          onHide={() => setToastConfig(null)}
+        />
+      )}
     </View>
   );
 }
@@ -405,6 +482,7 @@ const styles = StyleSheet.create({
   dateSelector: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 25, marginBottom: 15 },
   dateText: { fontFamily: "Outfit_700Bold", fontSize: 18, color: "#2C2C2C" },
   arrow: { fontSize: 22, fontWeight: "bold", color: "#2C2C2C", paddingHorizontal: 10 },
+  swipeZone: { flex: 1, width: "100%" },
   scrollContainer: { paddingHorizontal: 15, paddingBottom: 100 },
   slotRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 16, paddingHorizontal: 15, borderRadius: 4, marginBottom: 8 },
   slotActive: { backgroundColor: "#D6EBD3" },
@@ -412,7 +490,7 @@ const styles = StyleSheet.create({
   hourText: { fontFamily: "Outfit_600SemiBold", fontSize: 14, color: "#000", width: 48 },
   activityText: { fontFamily: "Outfit_400Regular", fontSize: 15, color: "#333", flex: 1, textAlign: "center" },
   selectedText: { fontFamily: "Outfit_600SemiBold" },
-  emptyContainer: { alignItems: "center", justifyContent: "center", marginTop: 40, paddingHorizontal: 20 },
+  emptyContainer: { flex: 1, minHeight: 400, alignItems: "center", justifyContent: "center", paddingHorizontal: 20 },
   emptyText: { fontFamily: "Outfit_400Regular", fontSize: 16, color: "#888", textAlign: "center", fontStyle: "italic" },
   floatingButton: { position: "absolute", bottom: 30, left: "15%", right: "15%", backgroundColor: "#D4833B", paddingVertical: 15, borderRadius: 8, alignItems: "center", elevation: 4 },
   floatingButtonText: { fontFamily: "Outfit_700Bold", color: "#FFF", fontSize: 16 },
@@ -422,7 +500,7 @@ const styles = StyleSheet.create({
   modalSubtitle: { fontFamily: "Outfit_400Regular", fontSize: 14, color: "#4A4A4A", textAlign: "center", marginBottom: 20 },
   recapCardContainer: { backgroundColor: "#D6EBD3", borderRadius: 8, marginBottom: 10, width: "100%", overflow: "hidden" },
   recapHeaderRow: { flexDirection: "row", alignItems: "center", padding: 12 },
-  arrowIcon: { marginRight: 8 }, 
+  arrowIcon: { marginRight: 8 },
   recapCardTitle: { fontFamily: "Outfit_400Regular", fontSize: 14, color: "#2C2C2C", flex: 1 },
   recapCardDetails: { backgroundColor: "rgba(255, 255, 255, 0.4)", paddingHorizontal: 12, paddingVertical: 10, borderTopWidth: 0.5, borderTopColor: "#B5D6B1" },
   recapCardLabel: { fontFamily: "Outfit_400Regular", fontSize: 12, color: "#555", marginBottom: 4 },
