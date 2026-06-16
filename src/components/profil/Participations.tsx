@@ -13,7 +13,6 @@ import { ParticipationDetails } from './ParticipationDetails';
 import {
   COLORS,
   FONTS_OUTFIT,
-  FONTS_FIGTREE,
   FONT_SIZE,
   RADIUS,
   SPACING,
@@ -133,14 +132,19 @@ export function Participations(props: {
         animationType="fade"
         onRequestClose={() => setVisible(false)}
       >
-        <BlurView intensity={4} tint='dark' experimentalBlurMethod="dimezisBlurView" style={styles.overlay}>
-          <Pressable style={styles.overlayPressable} onPress={() => setVisible(false)}>
+        <BlurView
+          intensity={4}
+          tint="dark"
+          experimentalBlurMethod="dimezisBlurView"
+          style={styles.overlay}
+        >
+          <Pressable
+            style={styles.overlayPressable}
+            onPress={() => setVisible(false)}
+          >
             <Pressable style={styles.carte} onPress={() => {}}>
               {choisie && <ParticipationDetails participation={choisie} />}
-              <Pressable
-                style={styles.btn}
-                onPress={() => setVisible(false)}
-              >
+              <Pressable style={styles.btn} onPress={() => setVisible(false)}>
                 <Text style={styles.btnText}>Fermer</Text>
               </Pressable>
             </Pressable>
@@ -153,8 +157,16 @@ export function Participations(props: {
         animationType="fade"
         onRequestClose={() => setConfirme(false)}
       >
-        <BlurView intensity={4} tint="dark" experimentalBlurMethod="dimezisBlurView" style={styles.overlay}>
-          <Pressable style={styles.overlayPressable} onPress={() => setConfirme(false)}>
+        <BlurView
+          intensity={4}
+          tint="dark"
+          experimentalBlurMethod="dimezisBlurView"
+          style={styles.overlay}
+        >
+          <Pressable
+            style={styles.overlayPressable}
+            onPress={() => setConfirme(false)}
+          >
             <Pressable style={styles.carte} onPress={() => {}}>
               {confirme && choisie && (
                 <AnnuleParticipation participation={choisie} />
@@ -166,7 +178,10 @@ export function Participations(props: {
                 >
                   <Text style={[styles.btnText]}>Non</Text>
                 </Pressable>
-                <Pressable style={[styles.btn, styles.btnFlex]} onPress={confirmeAnnulation}>
+                <Pressable
+                  style={[styles.btn, styles.btnFlex]}
+                  onPress={confirmeAnnulation}
+                >
                   <Text style={styles.btnText}>Oui</Text>
                 </Pressable>
               </View>
@@ -238,8 +253,8 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   boiteBoutons: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     gap: SPACING.sm,
   },
   btnFlex: {
