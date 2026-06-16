@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import GestureRecognizer from "react-native-swipe-gestures"; // Import du détecteur de gestes
+import GestureRecognizer from "react-native-swipe-gestures";
 import { loadToken } from "../store/securetoken"; 
 
 interface Creneau {
@@ -100,7 +100,7 @@ export function Participations() {
 
   const fetchUtilisateurs = async (authToken: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      const response = await fetch(`${API_BASE_URL}/utilisateur`, {
         method: "GET",
         headers: { Authorization: `Bearer ${authToken}`, "Content-Type": "application/json" },
       });
@@ -285,7 +285,7 @@ export function Participations() {
         onSwipeLeft={handleNextDay}      // Swipe vers la gauche = Jour Suivant
         onSwipeRight={handlePreviousDay}  // Swipe vers la droite = Jour Précédent
         config={swipeConfig}
-        style={{ flex: 1, width: '100%', borderColor: "red", borderWidth: 2 }} // Styles explicites ajoutés ici
+        style={{ flex: 1, width: '100%'}} // Styles explicites ajoutés ici
       >
         {/* On s'assure que le ScrollView laisse le conteneur parent capter les gestes horizontaux */}
         <ScrollView 
