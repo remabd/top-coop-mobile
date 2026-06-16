@@ -25,7 +25,6 @@ import { demandeAnnulationParticipation } from '../../api/utilisateur.api';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store/store';
 import { afficheToast } from '../../store/toastSlice';
-import { NiveauToast } from '../Toast';
 import { BlurView } from 'expo-blur';
 
 export function Participations(props: {
