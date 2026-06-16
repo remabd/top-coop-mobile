@@ -12,7 +12,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import GestureRecognizer from "react-native-swipe-gestures";
 import { useNavigation } from "@react-navigation/native";
 import { loadToken } from "../store/securetoken"; 
-import { Toast, NiveauToast } from "../components/Toast"; // Aligne le chemin selon ton architecture
+import { Toast, NiveauToast } from "../components/Toast"; 
 
 interface Creneau {
   id: string;
@@ -42,15 +42,10 @@ const COLORS = {
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://10.12.164.51:3002"; 
 
-/**
- * Fonction utilitaire native pour décoder la charge utile (payload) d'un jeton JWT
- */
 function decodeJwt(token: string): any {
   try {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    
-    // Décodage compatible environnement JavaScript / React Native
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split('')
@@ -78,10 +73,7 @@ export function Participations() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // État de gestion pour ton composant Toast personnalisé
   const [toastConfig, setToastConfig] = useState<{ message: string; niveau: NiveauToast } | null>(null);
-
-  // ID utilisateur dynamique extrait du Token
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -89,10 +81,8 @@ export function Participations() {
       const t = await loadToken();
       setToken(t);
       if (t) {
-        // Décodage du token pour récupérer l'ID réel de l'utilisateur connecté
         const decoded = decodeJwt(t);
         if (decoded) {
-          // NestJS utilise généralement .id ou .sub (subject) dans sa stratégie JWT
           const userId = decoded.id || decoded.sub || decoded.userId;
           setCurrentUserId(userId || null);
         }
@@ -206,9 +196,6 @@ export function Participations() {
     );
   };
 
-  /**
-   * Envoi des requêtes POST d'ajout de participations avec l'ID utilisateur connecté
-   */
   const handleValiderReservations = async () => {
     if (!token || !currentUserId) {
       setToastConfig({
@@ -221,7 +208,6 @@ export function Participations() {
     setIsSubmitting(true);
 
     try {
-      // Envoi des requêtes POST parallélisées avec l'identifiant dynamique validé
       const promises = selectedCreneauIds.map((id) =>
         fetch(`${API_BASE_URL}/participation`, {
           method: "POST",
@@ -252,7 +238,6 @@ export function Participations() {
         niveau: "ok"
       });
 
-      // Actualisation dynamique du calendrier et des participants inscrits
       await fetchParticipations(token); 
     } catch (error: any) {
       console.error("Erreur lors de la réservation :", error);
@@ -292,26 +277,57 @@ export function Participations() {
 
     creneauxDuJour.sort((a, b) => new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime());
 
+    const maintenant = new Date();
+
     return creneauxDuJour.map((creneau) => {
       const isSelected = selectedCreneauIds.includes(creneau.id);
       const dateDeb = new Date(creneau.dateDebut);
       const dateFin = new Date(creneau.dateFin);
 
+      // 1. Vérification si le créneau est déjà passé
+      const isPast = dateDeb < maintenant;
+
+      // 2. Vérification si l'utilisateur connecté est déjà inscrit à ce créneau
+      const isAlreadyRegistered = participations.some(
+        (p) => p.creneauId === creneau.id && p.utilisateurId === currentUserId
+      );
+
+      // Un créneau ne peut pas être cliqué s'il est passé OU si on y est déjà inscrit
+      const isDisabled = isPast || isAlreadyRegistered;
+
       return (
         <TouchableOpacity
           key={creneau.id}
           onPress={() => handleToggleCreneau(creneau.id)}
+          disabled={isDisabled}
           style={[
             styles.slotRow,
             styles.slotActive,
             isSelected && styles.slotSelected,
+            isAlreadyRegistered && styles.slotAlreadyRegistered, // Style si déjà inscrit
+            isPast && styles.slotPast, // Style si dépassé (grisé)
           ]}
         >
-          <Text style={styles.hourText}>{formatHeureMinute(dateDeb)}</Text>
-          <Text style={[styles.activityText, isSelected && styles.selectedText]}>
-            {creneau.nom}
+          <Text style={[styles.hourText, isDisabled && styles.disabledText]}>
+            {formatHeureMinute(dateDeb)}
           </Text>
-          <Text style={styles.hourText}>{formatHeureMinute(dateFin)}</Text>
+          
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={[
+              styles.activityText, 
+              isSelected && styles.selectedText,
+              isDisabled && styles.disabledText
+            ]}>
+              {creneau.nom}
+            </Text>
+            {isAlreadyRegistered && (
+              <MaterialIcons name="check-circle" size={16} color="#3E5C45" style={{ marginLeft: 6 }} />
+            )}
+          </View>
+
+          <Text style={[styles.hourText, isDisabled && styles.disabledText]}>
+            {formatHeureMinute(dateFin)}
+          </Text>
         </TouchableOpacity>
       );
     });
@@ -487,8 +503,11 @@ const styles = StyleSheet.create({
   slotRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 16, paddingHorizontal: 15, borderRadius: 4, marginBottom: 8 },
   slotActive: { backgroundColor: "#D6EBD3" },
   slotSelected: { backgroundColor: "#A8D4A3" },
+  slotAlreadyRegistered: { backgroundColor: "#EAF6E9", borderColor: "#A8D4A3", borderWidth: 1 },
+  slotPast: { backgroundColor: "#EAEAEA", opacity: 0.5 },
+  disabledText: { color: "#888", fontStyle: "italic" },
   hourText: { fontFamily: "Outfit_600SemiBold", fontSize: 14, color: "#000", width: 48 },
-  activityText: { fontFamily: "Outfit_400Regular", fontSize: 15, color: "#333", flex: 1, textAlign: "center" },
+  activityText: { fontFamily: "Outfit_400Regular", fontSize: 15, color: "#333", textAlign: "center" },
   selectedText: { fontFamily: "Outfit_600SemiBold" },
   emptyContainer: { flex: 1, minHeight: 400, alignItems: "center", justifyContent: "center", paddingHorizontal: 20 },
   emptyText: { fontFamily: "Outfit_400Regular", fontSize: 16, color: "#888", textAlign: "center", fontStyle: "italic" },
@@ -502,6 +521,7 @@ const styles = StyleSheet.create({
   recapHeaderRow: { flexDirection: "row", alignItems: "center", padding: 12 },
   arrowIcon: { marginRight: 8 },
   recapCardTitle: { fontFamily: "Outfit_400Regular", fontSize: 14, color: "#2C2C2C", flex: 1 },
+  // La correction est ici (guillemet corrigé sur le backgroundColor) :
   recapCardDetails: { backgroundColor: "rgba(255, 255, 255, 0.4)", paddingHorizontal: 12, paddingVertical: 10, borderTopWidth: 0.5, borderTopColor: "#B5D6B1" },
   recapCardLabel: { fontFamily: "Outfit_400Regular", fontSize: 12, color: "#555", marginBottom: 4 },
   recapCardUser: { fontFamily: "Outfit_600SemiBold", fontSize: 13, color: "#2C2C2C", paddingLeft: 4, marginVertical: 1 },
