@@ -6,6 +6,18 @@ export interface Panier {
   produits: ProduitPanier[];
 }
 
+export interface ObjetVersPanier {
+  prix: number;
+  produits: TypeProduitVersPanierProduit[];
+}
+
+export interface TypeProduitVersPanierProduit {
+  typeProduit: TypeProduit;
+  quantite: number;
+  unite: Unite;
+  prix: number;
+}
+
 export interface ProduitPanier {
   id: string;
   quantite: number;
