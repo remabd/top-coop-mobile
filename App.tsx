@@ -17,6 +17,7 @@ import {
 import { useEffect } from 'react';
 import { loadToken } from './src/store/securetoken';
 import { ActivityIndicator, View } from 'react-native';
+import { ToastHote } from './src/components/ToastHote';
 import {
   useFonts,
   Outfit_400Regular,
@@ -24,6 +25,11 @@ import {
   Outfit_700Bold,
 } from '@expo-google-fonts/outfit';
 import Camera from './src/containers/Camera';
+import {
+  Figtree_400Regular,
+  Figtree_600SemiBold,
+  Figtree_700Bold,
+} from '@expo-google-fonts/figtree';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -46,6 +52,9 @@ function Root() {
     Outfit_400Regular,
     Outfit_600SemiBold,
     Outfit_700Bold,
+    Figtree_400Regular,
+    Figtree_600SemiBold,
+    Figtree_700Bold,
   });
 
   useEffect(() => {
@@ -75,6 +84,7 @@ function Root() {
           <Stack.Screen name="connexion" component={Connexion} />
         )}
       </Stack.Navigator>
+      <ToastHote />
     </NavigationContainer>
   );
 }

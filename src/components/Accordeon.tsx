@@ -49,9 +49,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   rond: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     borderWidth: 1.5,
     borderColor: COLORS.texte,
     alignItems: 'center',

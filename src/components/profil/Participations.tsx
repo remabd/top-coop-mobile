@@ -12,7 +12,8 @@ import { useState } from 'react';
 import { ParticipationDetails } from './ParticipationDetails';
 import {
   COLORS,
-  FONTS,
+  FONTS_OUTFIT,
+  FONTS_FIGTREE,
   FONT_SIZE,
   RADIUS,
   SPACING,
@@ -20,11 +21,17 @@ import {
 } from '../../STYLE_CONSTS';
 import { TROIS_JOURS_EN_MS } from '../../CONSTS';
 import { AnnuleParticipation } from './AnnuleParticipation';
+import { demandeAnnulationParticipation } from '../../api/utilisateur.api';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../store/store';
+import { afficheToast } from '../../store/toastSlice';
+import { BlurView } from 'expo-blur';
 
 export function Participations(props: {
   participations: ParticipationAvecCreneauEtCoParticipants[];
 }) {
   const participations = props.participations;
+  const dispatch = useDispatch<AppDispatch>();
   const [visible, setVisible] = useState<boolean>(false);
   const [confirme, setConfirme] = useState<boolean>(false);
   const [choisie, choisir] =
@@ -40,11 +47,25 @@ export function Participations(props: {
     );
   }
 
-  function confirmeAnnulation() {
+  async function confirmeAnnulation() {
     setConfirme(false);
+    if (!choisie) return;
+    const response = await demandeAnnulationParticipation(choisie);
+    console.log(response);
+    if (!response.ok) {
+      dispatch(
+        afficheToast({
+          message: "Échec de l'annulation",
+          niveau: 'alerte',
+        })
+      );
+    }
+    dispatch(afficheToast({ message: 'Participation annulée', niveau: 'ok' }));
+    const index = participations.findIndex((p) => p.id === choisie.id);
+    participations.splice(index, 1);
   }
 
-  function annule(item: ParticipationAvecCreneauEtCoParticipants) {
+  function afficheAnnulation(item: ParticipationAvecCreneauEtCoParticipants) {
     choisir(item);
     setConfirme(true);
   }
@@ -75,7 +96,7 @@ export function Participations(props: {
                       {new Date(item.creneau.dateDebut).toLocaleDateString()}
                     </Text>
                     <Pressable
-                      onPress={() => annule(item)}
+                      onPress={() => afficheAnnulation(item)}
                       disabled={desactive}
                       hitSlop={8}
                     >
@@ -112,17 +133,19 @@ export function Participations(props: {
         animationType="fade"
         onRequestClose={() => setVisible(false)}
       >
-        <Pressable style={styles.overlay} onPress={() => setVisible(false)}>
-          <Pressable style={styles.carte} onPress={() => {}}>
-            {choisie && <ParticipationDetails participation={choisie} />}
-            <Pressable
-              style={styles.boutonFermer}
-              onPress={() => setVisible(false)}
-            >
-              <Text style={styles.boutonFermerTexte}>Fermer</Text>
+        <BlurView intensity={4} tint='dark' experimentalBlurMethod="dimezisBlurView" style={styles.overlay}>
+          <Pressable style={styles.overlayPressable} onPress={() => setVisible(false)}>
+            <Pressable style={styles.carte} onPress={() => {}}>
+              {choisie && <ParticipationDetails participation={choisie} />}
+              <Pressable
+                style={styles.btn}
+                onPress={() => setVisible(false)}
+              >
+                <Text style={styles.btnText}>Fermer</Text>
+              </Pressable>
             </Pressable>
           </Pressable>
-        </Pressable>
+        </BlurView>
       </Modal>
       <Modal
         visible={confirme}
@@ -130,22 +153,26 @@ export function Participations(props: {
         animationType="fade"
         onRequestClose={() => setConfirme(false)}
       >
-        <Pressable style={styles.overlay} onPress={() => setConfirme(false)}>
-          <Pressable style={styles.carte} onPress={() => {}}>
-            {confirme && choisie && (
-              <AnnuleParticipation participation={choisie} />
-            )}
-            <Pressable
-              style={styles.boutonFermer}
-              onPress={() => setConfirme(false)}
-            >
-              <Text style={styles.boutonFermerTexte}>Non</Text>
-            </Pressable>
-            <Pressable style={styles.boutonFermer} onPress={confirmeAnnulation}>
-              <Text style={styles.boutonFermerTexte}>Oui</Text>
+        <BlurView intensity={4} tint="dark" experimentalBlurMethod="dimezisBlurView" style={styles.overlay}>
+          <Pressable style={styles.overlayPressable} onPress={() => setConfirme(false)}>
+            <Pressable style={styles.carte} onPress={() => {}}>
+              {confirme && choisie && (
+                <AnnuleParticipation participation={choisie} />
+              )}
+              <View style={styles.boiteBoutons}>
+                <Pressable
+                  style={[styles.btn, styles.btnFlex, styles.btnOrange]}
+                  onPress={() => setConfirme(false)}
+                >
+                  <Text style={[styles.btnText]}>Non</Text>
+                </Pressable>
+                <Pressable style={[styles.btn, styles.btnFlex]} onPress={confirmeAnnulation}>
+                  <Text style={styles.btnText}>Oui</Text>
+                </Pressable>
+              </View>
             </Pressable>
           </Pressable>
-        </Pressable>
+        </BlurView>
       </Modal>
     </>
   );
@@ -164,11 +191,11 @@ const styles = StyleSheet.create({
     height: SPACING.sm,
   },
   nom: {
-    ...TEXTE.corpsFort,
+    ...TEXTE.corps,
     flex: 1,
   },
   date: {
-    ...TEXTE.corps,
+    ...TEXTE.discret,
     marginHorizontal: 10,
   },
   annuler: {
@@ -192,8 +219,12 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
+  },
+  overlayPressable: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   carte: {
     width: '85%',
@@ -206,16 +237,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 2,
   },
-  boutonFermer: {
+  boiteBoutons: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: SPACING.sm,
+  },
+  btnFlex: {
+    flex: 1,
+  },
+  btn: {
     backgroundColor: COLORS.vert_fonce,
     borderRadius: RADIUS.sm,
     paddingVertical: SPACING.md,
     alignItems: 'center',
     marginTop: SPACING.lg,
   },
-  boutonFermerTexte: {
-    fontFamily: FONTS.semibold,
+  btnText: {
+    fontFamily: FONTS_OUTFIT.semibold,
     fontSize: FONT_SIZE.lg,
     color: COLORS.blanc,
+  },
+  btnOrange: {
+    backgroundColor: COLORS.orange,
   },
 });
