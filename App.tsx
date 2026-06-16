@@ -24,6 +24,12 @@ import {
   Outfit_600SemiBold,
   Outfit_700Bold,
 } from '@expo-google-fonts/outfit';
+import Camera from './src/containers/Camera';
+import {
+  Figtree_400Regular,
+  Figtree_600SemiBold,
+  Figtree_700Bold,
+} from '@expo-google-fonts/figtree';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -46,6 +52,9 @@ function Root() {
     Outfit_400Regular,
     Outfit_600SemiBold,
     Outfit_700Bold,
+    Figtree_400Regular,
+    Figtree_600SemiBold,
+    Figtree_700Bold,
   });
 
   useEffect(() => {
@@ -69,6 +78,7 @@ function Root() {
           <>
             <Stack.Screen name="tabs" component={BottomNav} />
             <Stack.Screen name="catalogue" component={Catalogue} />
+            <Stack.Screen name="camera" component={Camera} />
           </>
         ) : (
           <Stack.Screen name="connexion" component={Connexion} />

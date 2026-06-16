@@ -20,7 +20,7 @@ export function Paniers(props: { paniers: Panier[] }) {
                 ? 'Le ' + new Date(item.dateCreation).toLocaleDateString()
                 : ''}
             </Text>
-            <Text>
+            <Text style={styles.heure}>
               À {new Date(item.dateCreation).toLocaleTimeString().slice(0, 5)}
             </Text>
             <Text style={styles.prix}>{item.prix}€</Text>
@@ -59,12 +59,13 @@ const styles = StyleSheet.create({
     height: SPACING.sm,
   },
   nom: {
-    ...TEXTE.corpsFort,
-    flex: 1,
+    ...TEXTE.corps,
   },
   date: {
     ...TEXTE.corps,
-    marginHorizontal: 10,
+  },
+  heure: {
+    ...TEXTE.discret,
   },
   prix: {
     ...TEXTE.corpsFort,

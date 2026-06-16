@@ -6,6 +6,28 @@ export interface Panier {
   produits: ProduitPanier[];
 }
 
+export interface ObjetVersPanier {
+  prix: number;
+  produits: TypeProduitVersPanierProduit[];
+}
+
+export interface DtoVersProduitPanierUtilisateur {
+  typeProduitId: string;
+  quantite: number;
+}
+
+export interface DtoVersPanierUtilisateur {
+  prix: number;
+  produits: DtoVersProduitPanierUtilisateur[];
+}
+
+export interface TypeProduitVersPanierProduit {
+  typeProduit: TypeProduit;
+  quantite: number;
+  unite: Unite;
+  prix: number;
+}
+
 export interface ProduitPanier {
   id: string;
   quantite: number;
@@ -45,6 +67,6 @@ export interface ProduitAvecType {
 }
 
 export enum Unite {
-  VRAC,
-  UNITE,
+  VRAC = 'VRAC',
+  UNITE = 'UNITE',
 }

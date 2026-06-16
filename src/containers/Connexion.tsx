@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { connexion as apiConnexion } from '../api/auth.api';
-import { COLORS, FONTS, FONT_SIZE, RADIUS, SPACING } from '../STYLE_CONSTS';
+import { COLORS, FONTS_OUTFIT, FONT_SIZE, RADIUS, SPACING } from '../STYLE_CONSTS';
 import { saveToken } from '../store/securetoken';
 import { useDispatch } from 'react-redux';
 import { connexion } from '../store/authSlice';
@@ -121,14 +121,14 @@ const styles = StyleSheet.create({
     paddingTop: 70,
   },
   titre: {
-    fontFamily: FONTS.bold,
+    fontFamily: FONTS_OUTFIT.bold,
     fontSize: FONT_SIZE.titreXl,
     color: COLORS.orange,
     textAlign: 'center',
     marginBottom: 130,
   },
   erreur: {
-    fontFamily: FONTS.semibold,
+    fontFamily: FONTS_OUTFIT.semibold,
     fontSize: FONT_SIZE.md,
     color: COLORS.erreur,
     textAlign: 'center',
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontFamily: FONTS.regular,
+    fontFamily: FONTS_OUTFIT.regular,
     fontSize: FONT_SIZE.lg,
     color: COLORS.texte,
   },
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   boutonTexte: {
-    fontFamily: FONTS.bold,
+    fontFamily: FONTS_OUTFIT.bold,
     fontSize: FONT_SIZE.xl,
     color: COLORS.blanc,
   },
