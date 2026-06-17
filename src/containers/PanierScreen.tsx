@@ -21,9 +21,13 @@ export function PanierScreen() {
     const produitsRestants = panier.produits.filter(
       (p) => p.typeProduit.id !== id
     );
+    const prix = produitsRestants.reduce(
+      (total, p) => total + p.prix * p.quantite,
+      0
+    );
     dispatch(
       modifiePanier({
-        prix: panier.prix - produit?.prix,
+        prix,
         produits: produitsRestants,
       })
     );
@@ -34,7 +38,7 @@ export function PanierScreen() {
     const produits = panier.produits.map((p) =>
       p.typeProduit.id === id ? { ...p, quantite } : p
     );
-    const prix = panier.produits.reduce((total, p) => total + p.prix, 0);
+    const prix = produits.reduce((total, p) => total + p.prix * p.quantite, 0);
     dispatch(
       modifiePanier({
         prix,
