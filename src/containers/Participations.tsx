@@ -344,13 +344,15 @@ export function Participations() {
     <View style={styles.contenu}>
       <View style={titres.entete}>
         <Text style={titres.titre}>Participations</Text>
-        <Text style={styles.subtitlePage}>
-          Vous avez <Text style={{ fontWeight: 'bold' }}>{quota}h</Text> à
-          réaliser ce mois-ci.
-        </Text>
-        <TouchableOpacity onPress={ouvreMesParticipations}>
-          <Text style={styles.linkText}>Voir mes participations</Text>
-        </TouchableOpacity>
+        <View style={styles.center}>
+          <Text style={styles.subtitlePage}>
+            Vous avez <Text style={{ fontWeight: 'bold' }}>{quota}h</Text> à
+            réaliser ce mois-ci.
+          </Text>
+          <TouchableOpacity onPress={ouvreMesParticipations}>
+            <Text style={styles.linkText}>Voir mes participations</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.dateSelector}>
