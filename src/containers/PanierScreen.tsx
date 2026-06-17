@@ -60,7 +60,11 @@ export function PanierScreen() {
           <></>
         ) : (
           <Pressable style={styles.lien} onPress={voirProduits}>
-            <MaterialIcons name="inventory-2" size={16} color={COLORS.texte} />
+            <MaterialIcons
+              name="inventory-2"
+              size={16}
+              color={COLORS.vert_fonce}
+            />
             <Text style={styles.lienTexte}>Voir les produits</Text>
           </Pressable>
         )}
@@ -86,7 +90,11 @@ export function PanierScreen() {
             <Text style={styles.scanProduitTexte}>Scanner un produit</Text>
           </Pressable>
           <Pressable style={styles.lien} onPress={voirProduits}>
-            <MaterialIcons name="inventory-2" size={16} color={COLORS.texte} />
+            <MaterialIcons
+              name="inventory-2"
+              size={16}
+              color={COLORS.vert_fonce}
+            />
             <Text style={styles.lienTexte}>Voir les produits</Text>
           </Pressable>
         </View>
@@ -137,6 +145,7 @@ const styles = StyleSheet.create({
   },
   lienTexte: {
     ...TEXTE.corps,
+    color: COLORS.vert_fonce,
     textDecorationLine: 'underline',
   },
   liste: {
