@@ -43,6 +43,7 @@ function BottomNav() {
         headerShown: false,
         tabBarActiveTintColor: COLORS.orange,
         tabBarInactiveTintColor: COLORS.noir,
+        tabBarStyle: { backgroundColor: COLORS.vert_clair },
       }}
     >
       <Tab.Screen
