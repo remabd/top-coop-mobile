@@ -26,7 +26,7 @@ export function AnnuleParticipation(props: {
 const styles = StyleSheet.create({
   entete: {
     paddingVertical: SPACING.md,
-    alignItems: "center",
+    alignItems: 'center',
   },
   creneau: {
     flexDirection: 'row',

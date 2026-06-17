@@ -18,21 +18,25 @@ import {
   chargePaniers,
   chargeParticipations,
 } from '../api/utilisateur.api';
-import { COLORS, FONTS_FIGTREE, FONT_SIZE, RADIUS, SPACING } from '../STYLE_CONSTS';
+import { COLORS, FONTS_FIGTREE, FONT_SIZE, SPACING } from '../STYLE_CONSTS';
 import { UtilisateurCard } from '../components/profil/UtilisateurCard';
 import { Paniers } from '../components/profil/Paniers';
 import { Participations } from '../components/profil/Participations';
 import { Accordeon } from '../components/Accordeon';
 import type { ComponentProps } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { titres } from '../styles/titres.style';
 
-const PREFERENCES: {label: string; icone: ComponentProps<typeof MaterialCommunityIcons>["name"];}[] = [
-  { label: 'Mes informations', icone: "account-outline" },
-  { label: 'Langues', icone: "translate" },
-  { label: 'Notifications', icone: "bell-outline" },
-  { label: 'Thème', icone: "palette-outline" },
-  { label: 'Signaler un problème', icone: "alert-decagram-outline" },
-  { label: 'À propos', icone: "information-outline" },
+const PREFERENCES: {
+  label: string;
+  icone: ComponentProps<typeof MaterialCommunityIcons>['name'];
+}[] = [
+  { label: 'Mes informations', icone: 'account-outline' },
+  { label: 'Langues', icone: 'translate' },
+  { label: 'Notifications', icone: 'bell-outline' },
+  { label: 'Thème', icone: 'palette-outline' },
+  { label: 'Signaler un problème', icone: 'alert-decagram-outline' },
+  { label: 'À propos', icone: 'information-outline' },
 ];
 
 export function Profil(props: any) {
@@ -82,7 +86,7 @@ export function Profil(props: any) {
   }
 
   return (
-    <ScrollView style={styles.ecran} contentContainerStyle={styles.contenu}>
+    <View style={styles.ecran}>
       {!utilisateur ? (
         <View>
           <ActivityIndicator size="large" color={COLORS.vert_fonce} />
@@ -91,63 +95,69 @@ export function Profil(props: any) {
           </Pressable>
         </View>
       ) : (
-        <>
-          <View style={styles.entete}>
-            <Text style={styles.titre}>Profil</Text>
-            <UtilisateurCard utilisateur={utilisateur} />
-          </View>
-
-          {message.length > 0 && <Text style={styles.erreur}>{message}</Text>}
-
-          <Paniers paniers={paniers} />
-          <Participations participations={participations} />
-
-          <Accordeon
-            title="Préférences"
-            body={
-              <View>
-                {PREFERENCES.map((p) => (
-                  <Pressable key={p.label} style={styles.preference}>
-                    <MaterialCommunityIcons name={p.icone} size={20} color={COLORS.vert_fonce} />
-                    <Text style={styles.preferenceTexte}>{p.label}</Text>
-                  </Pressable>
-                ))}
-                <Pressable style={styles.preference} onPress={deconnecte}>
-                  <MaterialCommunityIcons name="logout" size={20} color={COLORS.orange} />
-                  <Text style={styles.deconnexion}>Se déconnecter</Text>
-                </Pressable>
-              </View>
-            }
-          />
-        </>
+        <View style={titres.entete}>
+          <Text style={titres.titre}>Profil</Text>
+          <UtilisateurCard utilisateur={utilisateur} />
+        </View>
       )}
-    </ScrollView>
+      <ScrollView
+        contentContainerStyle={styles.contenu}
+        showsVerticalScrollIndicator={false}
+      >
+        {!utilisateur ? (
+          <View>
+            <Text>
+              Vous n`&apos`êtes pas connecté. Déconnectez-vous puis reconnecter.
+            </Text>
+          </View>
+        ) : (
+          <>
+            {message.length > 0 && <Text style={styles.erreur}>{message}</Text>}
+            <Paniers paniers={paniers} />
+            <Participations participations={participations} />
+            <Accordeon
+              title="Préférences"
+              ouvert
+              body={
+                <View>
+                  {PREFERENCES.map((p) => (
+                    <Pressable key={p.label} style={styles.preference}>
+                      <MaterialCommunityIcons
+                        name={p.icone}
+                        size={20}
+                        color={COLORS.vert_fonce}
+                      />
+                      <Text style={styles.preferenceTexte}>{p.label}</Text>
+                    </Pressable>
+                  ))}
+                  <Pressable style={styles.preference} onPress={deconnecte}>
+                    <MaterialCommunityIcons
+                      name="logout"
+                      size={20}
+                      color={COLORS.orange}
+                    />
+                    <Text style={styles.deconnexion}>Se déconnecter</Text>
+                  </Pressable>
+                </View>
+              }
+            />
+          </>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   ecran: {
     flex: 1,
-    backgroundColor: COLORS.blanc,
+    backgroundColor: COLORS.background,
+    paddingTop: 30,
+    paddingBottom: 0,
+    padding: SPACING.xl,
   },
   contenu: {
-    padding: SPACING.xl,
-    paddingTop: 30,
-    paddingBottom: 32,
-  },
-  entete: {
-    backgroundColor: COLORS.blanc,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.xl,
-    paddingLeft: 0,
-    marginBottom: SPACING.xxl,
-  },
-  titre: {
-    fontFamily: FONTS_FIGTREE.bold,
-    fontSize: FONT_SIZE.titre,
-    color: COLORS.orange,
-    textAlign: 'center',
-    marginBottom: SPACING.lg,
+    // height: "100%",
   },
   erreur: {
     fontFamily: FONTS_FIGTREE.semibold,
@@ -161,6 +171,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: SPACING.sm,
     paddingVertical: 7,
+    height: 'auto',
   },
   preferenceTexte: {
     fontFamily: FONTS_FIGTREE.regular,

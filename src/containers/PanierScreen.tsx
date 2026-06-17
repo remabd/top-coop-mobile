@@ -6,14 +6,8 @@ import { AppDispatch } from '../store/store';
 import { ProductCard } from '../components/panier/ProductCard';
 import { useNavigation } from '@react-navigation/native';
 import { ActionZone } from '../components/panier/ActionZone';
-import {
-  COLORS,
-  FONTS_OUTFIT,
-  FONT_SIZE,
-  RADIUS,
-  SPACING,
-  TEXTE,
-} from '../STYLE_CONSTS';
+import { COLORS, RADIUS, SPACING, TEXTE } from '../STYLE_CONSTS';
+import { titres } from '../styles/titres.style';
 
 export function PanierScreen() {
   const navigation = useNavigation<any>();
@@ -27,9 +21,13 @@ export function PanierScreen() {
     const produitsRestants = panier.produits.filter(
       (p) => p.typeProduit.id !== id
     );
+    const prix = produitsRestants.reduce(
+      (total, p) => total + p.prix * p.quantite,
+      0
+    );
     dispatch(
       modifiePanier({
-        prix: panier.prix - produit?.prix,
+        prix,
         produits: produitsRestants,
       })
     );
@@ -40,7 +38,7 @@ export function PanierScreen() {
     const produits = panier.produits.map((p) =>
       p.typeProduit.id === id ? { ...p, quantite } : p
     );
-    const prix = panier.produits.reduce((total, p) => total + p.prix, 0);
+    const prix = produits.reduce((total, p) => total + p.prix * p.quantite, 0);
     dispatch(
       modifiePanier({
         prix,
@@ -55,8 +53,10 @@ export function PanierScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titre}>Panier</Text>
+    <View style={styles.contenu}>
+      <View style={titres.entete}>
+        <Text style={titres.titre}>Panier</Text>
+      </View>
 
       {panierVide ? (
         <View style={styles.vide}>
@@ -110,27 +110,26 @@ export function PanierScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  contenu: {
     flex: 1,
-    backgroundColor: COLORS.blanc,
-    marginTop: 30,
-    paddingTop: SPACING.xxl,
-    paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.xl,
+    backgroundColor: COLORS.background,
+    paddingTop: 30,
+    paddingBottom: 12,
+    padding: SPACING.xl,
   },
-  titre: {
-    fontFamily: FONTS_OUTFIT.bold,
-    fontSize: FONT_SIZE.titre,
-    color: COLORS.orange,
-    textAlign: 'center',
-    marginBottom: SPACING.md,
-  },
+  // container: {
+  //   flex: 1,
+  //   backgroundColor: COLORS.blanc,
+  //   marginTop: 30,
+  //   paddingTop: SPACING.xxl,
+  //   paddingHorizontal: SPACING.xl,
+  //   paddingBottom: SPACING.xl,
+  // },
   lien: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: SPACING.xs,
-    marginBottom: SPACING.lg,
   },
   lienTexte: {
     ...TEXTE.corps,

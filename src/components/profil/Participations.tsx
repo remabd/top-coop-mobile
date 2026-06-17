@@ -10,14 +10,7 @@ import { ParticipationAvecCreneauEtCoParticipants } from '../../models/participa
 import { Accordeon } from '../Accordeon';
 import { useState } from 'react';
 import { ParticipationDetails } from './ParticipationDetails';
-import {
-  COLORS,
-  FONTS_OUTFIT,
-  FONT_SIZE,
-  RADIUS,
-  SPACING,
-  TEXTE,
-} from '../../STYLE_CONSTS';
+import { COLORS, RADIUS, SPACING, TEXTE } from '../../STYLE_CONSTS';
 import { TROIS_JOURS_EN_MS } from '../../CONSTS';
 import { AnnuleParticipation } from './AnnuleParticipation';
 import { demandeAnnulationParticipation } from '../../api/utilisateur.api';
@@ -25,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store/store';
 import { afficheToast } from '../../store/toastSlice';
 import { BlurView } from 'expo-blur';
+import { modal } from '../../styles/modal.style';
 
 export function Participations(props: {
   participations: ParticipationAvecCreneauEtCoParticipants[];
@@ -136,16 +130,16 @@ export function Participations(props: {
           intensity={4}
           tint="dark"
           experimentalBlurMethod="dimezisBlurView"
-          style={styles.overlay}
+          style={modal.overlay}
         >
           <Pressable
-            style={styles.overlayPressable}
+            style={modal.overlayPressable}
             onPress={() => setVisible(false)}
           >
-            <Pressable style={styles.carte} onPress={() => {}}>
+            <Pressable style={modal.carte} onPress={() => {}}>
               {choisie && <ParticipationDetails participation={choisie} />}
-              <Pressable style={styles.btn} onPress={() => setVisible(false)}>
-                <Text style={styles.btnText}>Fermer</Text>
+              <Pressable style={modal.btn} onPress={() => setVisible(false)}>
+                <Text style={modal.btnText}>Fermer</Text>
               </Pressable>
             </Pressable>
           </Pressable>
@@ -161,28 +155,28 @@ export function Participations(props: {
           intensity={4}
           tint="dark"
           experimentalBlurMethod="dimezisBlurView"
-          style={styles.overlay}
+          style={modal.overlay}
         >
           <Pressable
-            style={styles.overlayPressable}
+            style={modal.overlayPressable}
             onPress={() => setConfirme(false)}
           >
-            <Pressable style={styles.carte} onPress={() => {}}>
+            <Pressable style={modal.carte} onPress={() => {}}>
               {confirme && choisie && (
                 <AnnuleParticipation participation={choisie} />
               )}
-              <View style={styles.boiteBoutons}>
+              <View style={modal.boiteBoutons}>
                 <Pressable
                   style={[styles.btn, styles.btnFlex]}
                   onPress={() => setConfirme(false)}
                 >
-                  <Text style={[styles.btnText]}>Non</Text>
+                  <Text style={[modal.btnText]}>Non</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.btn, styles.btnFlex, styles.btnOrange]}
                   onPress={confirmeAnnulation}
                 >
-                  <Text style={styles.btnText}>Oui</Text>
+                  <Text style={modal.btnText}>Oui</Text>
                 </Pressable>
               </View>
             </Pressable>
@@ -231,48 +225,5 @@ const styles = StyleSheet.create({
   voirPlusTexte: {
     ...TEXTE.titreSection,
     color: COLORS.vert_fonce,
-  },
-  overlay: {
-    flex: 1,
-  },
-  overlayPressable: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  },
-  carte: {
-    width: '85%',
-    backgroundColor: COLORS.blanc,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.xxl,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-  },
-  boiteBoutons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: SPACING.sm,
-  },
-  btnFlex: {
-    flex: 1,
-  },
-  btn: {
-    backgroundColor: COLORS.vert_fonce,
-    borderRadius: RADIUS.sm,
-    paddingVertical: SPACING.md,
-    alignItems: 'center',
-    marginTop: SPACING.lg,
-  },
-  btnText: {
-    fontFamily: FONTS_OUTFIT.semibold,
-    fontSize: FONT_SIZE.lg,
-    color: COLORS.blanc,
-  },
-  btnOrange: {
-    backgroundColor: COLORS.orange,
   },
 });

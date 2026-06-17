@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { COLORS, RADIUS, SPACING, TEXTE } from '../../STYLE_CONSTS';
 import { ProduitQuantite } from './ProduitQuantite';
 import { BlurView } from 'expo-blur';
+import { modal } from '../../styles/modal.style';
 
 export function ProductCard(props: {
   produit: TypeProduitVersPanierProduit;
@@ -77,29 +78,29 @@ export function ProductCard(props: {
           intensity={4}
           tint="dark"
           experimentalBlurMethod="dimezisBlurView"
-          style={styles.overlay}
+          style={modal.overlay}
         >
           <Pressable
-            style={styles.overlayPressable}
+            style={modal.overlayPressable}
             onPress={() => setVisible(false)}
           >
-            <Pressable style={styles.carte} onPress={() => {}}>
+            <Pressable style={modal.carte} onPress={() => {}}>
               <ProduitQuantite
                 produit={produit}
                 onChangeQuantite={setQuantiteAValider}
               />
-              <View style={styles.boutons}>
+              <View style={modal.boiteBoutons}>
                 <Pressable
-                  style={[styles.bouton, styles.boutonAnnuler]}
+                  style={[modal.btn, modal.btnFlex]}
                   onPress={() => setVisible(false)}
                 >
-                  <Text style={styles.boutonTexte}>Annuler</Text>
+                  <Text style={modal.btnText}>Annuler</Text>
                 </Pressable>
                 <Pressable
-                  style={[styles.bouton, styles.boutonValider]}
+                  style={[modal.btn, modal.btnOrange, modal.btnFlex]}
                   onPress={valide}
                 >
-                  <Text style={styles.boutonTexte}>Ajouter</Text>
+                  <Text style={modal.btnText}>Ajouter</Text>
                 </Pressable>
               </View>
             </Pressable>
@@ -146,46 +147,5 @@ const styles = StyleSheet.create({
   },
   prix: {
     ...TEXTE.corpsFort,
-  },
-  overlay: {
-    flex: 1,
-  },
-  overlayPressable: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  },
-  carte: {
-    width: '85%',
-    backgroundColor: COLORS.blanc,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.xxl,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  boutons: {
-    flexDirection: 'row',
-    gap: SPACING.md,
-    marginTop: SPACING.lg,
-  },
-  bouton: {
-    flex: 1,
-    borderRadius: RADIUS.sm,
-    paddingVertical: SPACING.md,
-    alignItems: 'center',
-  },
-  boutonAnnuler: {
-    backgroundColor: COLORS.vert_fonce,
-  },
-  boutonValider: {
-    backgroundColor: COLORS.orange,
-  },
-  boutonTexte: {
-    ...TEXTE.corpsFort,
-    color: COLORS.blanc,
   },
 });

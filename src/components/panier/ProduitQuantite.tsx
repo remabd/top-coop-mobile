@@ -21,8 +21,6 @@ export function ProduitQuantite(props: {
     setNouvellequantite(nettoye);
 
     const quantite = estVrac ? parseFloat(nettoye) : parseInt(nettoye, 10);
-    // remonte la valeur saisie (NaN si champ vide/invalide) au parent,
-    // qui décidera de valider via son bouton
     props.onChangeQuantite(quantite);
   }
 
