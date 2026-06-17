@@ -42,7 +42,7 @@ function BottomNav() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: COLORS.orange,
-        tabBarInactiveTintColor: COLORS.noir,
+        tabBarInactiveTintColor: COLORS.vert_fonce,
         tabBarStyle: { backgroundColor: COLORS.vert_clair },
       }}
     >
