@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -47,10 +48,17 @@ export function Profil(props: any) {
   >([]);
   const [utilisateur, setUtilisateur] = useState<UtilisateurInfos>();
   const [message, setMessage] = useState<string>('');
+  const [rafraichit, setRafraichit] = useState(false);
 
   useEffect(() => {
     initialize();
   }, []);
+
+  async function rafraichis() {
+    setRafraichit(true);
+    await initialize();
+    setRafraichit(false);
+  }
 
   async function initialize() {
     let ures = await chargeInformations();
@@ -103,6 +111,14 @@ export function Profil(props: any) {
       <ScrollView
         contentContainerStyle={styles.contenu}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={rafraichit}
+            onRefresh={rafraichis}
+            tintColor={COLORS.vert_fonce}
+            colors={[COLORS.vert_fonce]}
+          />
+        }
       >
         {!utilisateur ? (
           <View>
