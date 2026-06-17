@@ -42,7 +42,7 @@ const COLORS = {
   texte: '#2C2C2C',
 };
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || ""; 
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || '';
 
 function decodeJwt(token: string): any {
   try {

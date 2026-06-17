@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -7,16 +7,23 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   TextInput,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { loadToken } from "../store/securetoken";
-import { COLORS, FONTS_OUTFIT, FONT_SIZE, RADIUS, SPACING, TEXTE } from "../STYLE_CONSTS";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { loadToken } from '../store/securetoken';
+import {
+  COLORS,
+  FONTS_OUTFIT,
+  FONT_SIZE,
+  RADIUS,
+  SPACING,
+  TEXTE,
+} from '../STYLE_CONSTS';
 
 enum Unite {
-  VRAC = "VRAC",
-  UNITE = "UNITE",
+  VRAC = 'VRAC',
+  UNITE = 'UNITE',
 }
 
 interface TypeProduit {
@@ -30,7 +37,7 @@ interface TypeProduit {
 interface ProduitLotAPI {
   id: string;
   typeProduitId: string;
-  quantite: number; 
+  quantite: number;
   dateArrive: string;
   dateSortie?: string | null;
   typeProduit?: TypeProduit;
@@ -42,35 +49,35 @@ interface ProduitGroupé {
   typeProduit: TypeProduit;
 }
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "";
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || '';
 
 export function Catalogue() {
   const navigation = useNavigation();
   const [produits, setProduits] = useState<ProduitGroupé[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [erreur, setErreur] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     async function fetchCatalogue() {
       try {
         const token = await loadToken();
-        
+
         const response = await fetch(`${API_BASE_URL}/produit/avecType`, {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         });
 
         if (!response.ok) {
-          throw new Error("Impossible de charger le catalogue.");
+          throw new Error('Impossible de charger le catalogue.');
         }
 
         const data = await response.json();
         const listeBrute: ProduitLotAPI[] = Array.isArray(data) ? data : [];
-        
+
         const groups: Record<string, ProduitGroupé> = {};
 
         listeBrute.forEach((p) => {
@@ -88,14 +95,14 @@ export function Catalogue() {
 
         const listeFusionnee = Object.values(groups);
 
-        const listeTriee = listeFusionnee.sort((a, b) => 
-          (a.typeProduit?.nom || "").localeCompare(b.typeProduit?.nom || "")
+        const listeTriee = listeFusionnee.sort((a, b) =>
+          (a.typeProduit?.nom || '').localeCompare(b.typeProduit?.nom || '')
         );
 
         setProduits(listeTriee);
       } catch (err: any) {
-        console.error("Erreur catalogue:", err);
-        setErreur(err.message || "Une erreur est survenue.");
+        console.error('Erreur catalogue:', err);
+        setErreur(err.message || 'Une erreur est survenue.');
       } finally {
         setLoading(false);
       }
@@ -107,21 +114,26 @@ export function Catalogue() {
   const produitsFiltrés = useMemo(() => {
     if (!searchQuery.trim()) return produits;
     const query = searchQuery.toLowerCase().trim();
-    return produits.filter((p) => 
+    return produits.filter((p) =>
       p.typeProduit?.nom?.toLowerCase().includes(query)
     );
   }, [searchQuery, produits]);
 
-  const renderProduitItem = ({ item, index }: { item: ProduitGroupé; index: number }) => {
+  const renderProduitItem = ({
+    item,
+    index,
+  }: {
+    item: ProduitGroupé;
+    index: number;
+  }) => {
     const type = item.typeProduit;
     if (!type) return null;
 
     const estEnStock = item.quantiteGlobale > 0;
-    const suffixeUnite = type.unite === Unite.VRAC ? "€/kg" : "€";
-    
-    const prixAffiche = typeof type.prix === 'number' 
-      ? type.prix.toFixed(2) 
-      : "0.00";
+    const suffixeUnite = type.unite === Unite.VRAC ? '€/kg' : '€';
+
+    const prixAffiche =
+      typeof type.prix === 'number' ? type.prix.toFixed(2) : '0.00';
 
     // Alternance des couleurs de fond des cartes (index pair vs index impair)
     const fondCarte = index % 2 === 0 ? styles.carteClaire : styles.carteGrisee;
@@ -147,7 +159,7 @@ export function Catalogue() {
               estEnStock ? styles.texteEnStock : styles.texteRupture,
             ]}
           >
-            {estEnStock ? "En stock" : "Rupture"}
+            {estEnStock ? 'En stock' : 'Rupture'}
           </Text>
         </View>
       </View>
@@ -174,8 +186,8 @@ export function Catalogue() {
     <SafeAreaView style={styles.container}>
       {/* Barre supérieure */}
       <View style={styles.headerContainer}>
-        <TouchableOpacity 
-          style={styles.boutonRetour} 
+        <TouchableOpacity
+          style={styles.boutonRetour}
           onPress={() => navigation.goBack()}
           hitSlop={15}
         >
@@ -187,7 +199,7 @@ export function Catalogue() {
 
       {/* Barre de recherche verte et élargie */}
       <View style={styles.searchContainer}>
-        <MaterialIcons name="search" size={22}  style={styles.searchIcon} />
+        <MaterialIcons name="search" size={22} style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           placeholder="Rechercher un produit..."
@@ -206,7 +218,9 @@ export function Catalogue() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.centreVide}>
-            <Text style={styles.texteVide}>Aucun produit ne correspond à votre recherche.</Text>
+            <Text style={styles.texteVide}>
+              Aucun produit ne correspond à votre recherche.
+            </Text>
           </View>
         }
       />
@@ -221,13 +235,13 @@ const styles = StyleSheet.create({
   },
   centre: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: SPACING.xl,
     marginTop: SPACING.sm,
     marginBottom: SPACING.md,
@@ -240,41 +254,41 @@ const styles = StyleSheet.create({
     fontFamily: FONTS_OUTFIT.bold,
     fontSize: FONT_SIZE.titre,
     color: COLORS.orange,
-    textAlign: "center",
+    textAlign: 'center',
     flex: 1,
   },
   headerEspace: {
-    width: 35, 
+    width: 35,
   },
   searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: RADIUS.md,
     marginHorizontal: SPACING.xl,
     marginBottom: SPACING.lg,
     paddingHorizontal: SPACING.md,
     height: 50,
     borderWidth: 1,
-    borderColor: "#445D44",
+    borderColor: '#445D44',
   },
   searchIcon: {
     marginRight: SPACING.sm,
-    color:"#445D44",
+    color: '#445D44',
   },
   searchInput: {
     flex: 1,
     fontFamily: FONTS_OUTFIT.regular,
     fontSize: 16,
-    color: "#2C2C2C",
+    color: '#2C2C2C',
   },
   listeContenu: {
     paddingHorizontal: SPACING.xl,
     paddingBottom: SPACING.xl,
   },
   carteProduit: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderRadius: RADIUS.md,
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.md,
@@ -283,10 +297,10 @@ const styles = StyleSheet.create({
     borderColor: COLORS.bordure,
   },
   carteClaire: {
-    backgroundColor: "#CCE6BB",
+    backgroundColor: '#CCE6BB',
   },
   carteGrisee: {
-    backgroundColor: "rgb(204, 230, 187, 0.6)",
+    backgroundColor: 'rgb(204, 230, 187, 0.6)',
   },
   zoneInfos: {
     flex: 1,
@@ -294,51 +308,51 @@ const styles = StyleSheet.create({
   },
   nomProduit: {
     ...TEXTE.corpsFort,
-    color: "#2C2C2C",
+    color: '#2C2C2C',
   },
   prixProduit: {
     ...TEXTE.corps,
     color: COLORS.orange,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   badgeStatut: {
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: RADIUS.sm,
     minWidth: 85,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   badgeEnStock: {
-    backgroundColor: "#eaffe4",
+    backgroundColor: '#eaffe4',
   },
   badgeRupture: {
-    backgroundColor: "#FCE8E6",
+    backgroundColor: '#FCE8E6',
   },
   texteBadge: {
     fontFamily: FONTS_OUTFIT.bold,
     fontSize: FONT_SIZE.sm || 13,
   },
   texteEnStock: {
-    color: COLORS.vert_fonce || "#3E5C45",
+    color: COLORS.vert_fonce || '#3E5C45',
   },
   texteRupture: {
-    color: COLORS.erreur || "#C53030",
+    color: COLORS.erreur || '#C53030',
   },
   centreVide: {
     marginTop: 40,
-    alignItems: "center",
+    alignItems: 'center',
   },
   texteVide: {
     ...TEXTE.corps,
     color: COLORS.placeholder,
-    fontStyle: "italic",
-    textAlign: "center",
+    fontStyle: 'italic',
+    textAlign: 'center',
   },
   texteErreur: {
     fontFamily: FONTS_OUTFIT.semibold,
     color: COLORS.erreur,
     fontSize: FONT_SIZE.md,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });
