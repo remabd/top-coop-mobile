@@ -173,13 +173,13 @@ export function Participations(props: {
               )}
               <View style={styles.boiteBoutons}>
                 <Pressable
-                  style={[styles.btn, styles.btnFlex, styles.btnOrange]}
+                  style={[styles.btn, styles.btnFlex]}
                   onPress={() => setConfirme(false)}
                 >
                   <Text style={[styles.btnText]}>Non</Text>
                 </Pressable>
                 <Pressable
-                  style={[styles.btn, styles.btnFlex]}
+                  style={[styles.btn, styles.btnFlex, styles.btnOrange]}
                   onPress={confirmeAnnulation}
                 >
                   <Text style={styles.btnText}>Oui</Text>
