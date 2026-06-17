@@ -12,6 +12,7 @@ export const COLORS = {
   avatar: '#D9D9D9',
   bordure: '#D7D7D7',
   noir: '#222222',
+  background: '#F9FBF7',
 };
 
 export const FONTS_OUTFIT = {
