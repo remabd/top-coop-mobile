@@ -187,11 +187,11 @@ export function Catalogue() {
 
       {/* Barre de recherche verte et élargie */}
       <View style={styles.searchContainer}>
-        <MaterialIcons name="search" size={22} color="#557A58" style={styles.searchIcon} />
+        <MaterialIcons name="search" size={22}  style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           placeholder="Rechercher un produit..."
-          placeholderTextColor="#7A9A7E"
+          placeholderTextColor="#445D44"
           value={searchQuery}
           onChangeText={setSearchQuery}
           clearButtonMode="while-editing"
@@ -244,22 +244,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerEspace: {
-    width: 35, // Permet de conserver un centrage parfait du titre
+    width: 35, 
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#EAF2E8", // Vert très doux pour le fond
     borderRadius: RADIUS.md,
     marginHorizontal: SPACING.xl,
     marginBottom: SPACING.lg,
     paddingHorizontal: SPACING.md,
-    height: 50, // Hauteur augmentée pour un rendu plus moderne
+    height: 50,
     borderWidth: 1,
-    borderColor: "#CBDCCB", // Bordure verte discrète
+    borderColor: "#445D44",
   },
   searchIcon: {
     marginRight: SPACING.sm,
+    color:"#445D44",
   },
   searchInput: {
     flex: 1,
@@ -283,10 +283,10 @@ const styles = StyleSheet.create({
     borderColor: COLORS.bordure,
   },
   carteClaire: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#CCE6BB",
   },
   carteGrisee: {
-    backgroundColor: "#F7F9F6", // Légère nuance de gris/vert pour l'alternance
+    backgroundColor: "rgb(204, 230, 187, 0.6)",
   },
   zoneInfos: {
     flex: 1,
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   badgeEnStock: {
-    backgroundColor: "#D6EBD3",
+    backgroundColor: "#eaffe4",
   },
   badgeRupture: {
     backgroundColor: "#FCE8E6",
