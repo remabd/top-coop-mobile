@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { connexion as apiConnexion } from '../api/auth.api';
-import { COLORS, FONTS_OUTFIT, FONT_SIZE, RADIUS, SPACING } from '../STYLE_CONSTS';
+import {
+  COLORS,
+  FONTS_OUTFIT,
+  FONT_SIZE,
+  RADIUS,
+  SPACING,
+} from '../STYLE_CONSTS';
 import { saveToken } from '../store/securetoken';
 import { useDispatch } from 'react-redux';
 import { connexion } from '../store/authSlice';

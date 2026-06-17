@@ -18,7 +18,13 @@ import {
   chargePaniers,
   chargeParticipations,
 } from '../api/utilisateur.api';
-import { COLORS, FONTS_FIGTREE, FONT_SIZE, RADIUS, SPACING } from '../STYLE_CONSTS';
+import {
+  COLORS,
+  FONTS_FIGTREE,
+  FONT_SIZE,
+  RADIUS,
+  SPACING,
+} from '../STYLE_CONSTS';
 import { UtilisateurCard } from '../components/profil/UtilisateurCard';
 import { Paniers } from '../components/profil/Paniers';
 import { Participations } from '../components/profil/Participations';
@@ -26,13 +32,16 @@ import { Accordeon } from '../components/Accordeon';
 import type { ComponentProps } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const PREFERENCES: {label: string; icone: ComponentProps<typeof MaterialCommunityIcons>["name"];}[] = [
-  { label: 'Mes informations', icone: "account-outline" },
-  { label: 'Langues', icone: "translate" },
-  { label: 'Notifications', icone: "bell-outline" },
-  { label: 'Thème', icone: "palette-outline" },
-  { label: 'Signaler un problème', icone: "alert-decagram-outline" },
-  { label: 'À propos', icone: "information-outline" },
+const PREFERENCES: {
+  label: string;
+  icone: ComponentProps<typeof MaterialCommunityIcons>['name'];
+}[] = [
+  { label: 'Mes informations', icone: 'account-outline' },
+  { label: 'Langues', icone: 'translate' },
+  { label: 'Notifications', icone: 'bell-outline' },
+  { label: 'Thème', icone: 'palette-outline' },
+  { label: 'Signaler un problème', icone: 'alert-decagram-outline' },
+  { label: 'À propos', icone: 'information-outline' },
 ];
 
 export function Profil(props: any) {
@@ -108,12 +117,20 @@ export function Profil(props: any) {
               <View>
                 {PREFERENCES.map((p) => (
                   <Pressable key={p.label} style={styles.preference}>
-                    <MaterialCommunityIcons name={p.icone} size={20} color={COLORS.vert_fonce} />
+                    <MaterialCommunityIcons
+                      name={p.icone}
+                      size={20}
+                      color={COLORS.vert_fonce}
+                    />
                     <Text style={styles.preferenceTexte}>{p.label}</Text>
                   </Pressable>
                 ))}
                 <Pressable style={styles.preference} onPress={deconnecte}>
-                  <MaterialCommunityIcons name="logout" size={20} color={COLORS.orange} />
+                  <MaterialCommunityIcons
+                    name="logout"
+                    size={20}
+                    color={COLORS.orange}
+                  />
                   <Text style={styles.deconnexion}>Se déconnecter</Text>
                 </Pressable>
               </View>
