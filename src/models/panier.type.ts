@@ -1,9 +1,31 @@
 export interface Panier {
-  id?: string;
+  id: string;
   prix: number;
-  dateCreation?: Date;
-  utilisateurId?: string;
+  dateCreation: Date;
+  utilisateurId: string;
   produits: ProduitPanier[];
+}
+
+export interface ObjetVersPanier {
+  prix: number;
+  produits: TypeProduitVersPanierProduit[];
+}
+
+export interface DtoVersProduitPanierUtilisateur {
+  typeProduitId: string;
+  quantite: number;
+}
+
+export interface DtoVersPanierUtilisateur {
+  prix: number;
+  produits: DtoVersProduitPanierUtilisateur[];
+}
+
+export interface TypeProduitVersPanierProduit {
+  typeProduit: TypeProduit;
+  quantite: number;
+  unite: Unite;
+  prix: number;
 }
 
 export interface ProduitPanier {
@@ -44,18 +66,7 @@ export interface ProduitAvecType {
   typeProduit: TypeProduit;
 }
 
-export enum Role {
-  USER,
-  ADMIN,
-}
-
-export enum Status {
-  AVANT,
-  EN_COURS,
-  FINI,
-}
-
 export enum Unite {
-  VRAC,
-  UNITE,
+  VRAC = 'VRAC',
+  UNITE = 'UNITE',
 }

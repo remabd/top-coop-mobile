@@ -1,0 +1,140 @@
+import { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, Text, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { COLORS, RADIUS, SPACING, TEXTE } from '../STYLE_CONSTS';
+
+export type NiveauToast = 'ok' | 'avertissement' | 'alerte';
+
+type NomIcone = keyof typeof MaterialIcons.glyphMap;
+
+const NIVEAUX: Record<NiveauToast, { icone: NomIcone; couleur: string }> = {
+  ok: { icone: 'check-circle', couleur: COLORS.vert_fonce },
+  avertissement: { icone: 'warning', couleur: COLORS.orange },
+  alerte: { icone: 'error', couleur: COLORS.erreur },
+};
+
+const DUREE_ANIMATION = 250;
+
+export function Toast(props: {
+  message: string;
+  niveau?: NiveauToast;
+  duree?: number;
+  onHide: () => void;
+}) {
+  const niveau = NIVEAUX[props.niveau ?? 'ok'];
+  const duree = props.duree ?? 2000;
+
+  const apparition = useRef(new Animated.Value(0)).current;
+  const progression = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const sequence = Animated.sequence([
+      Animated.timing(apparition, {
+        toValue: 1,
+        duration: DUREE_ANIMATION,
+        useNativeDriver: true,
+      }),
+      Animated.delay(duree),
+      Animated.timing(apparition, {
+        toValue: 0,
+        duration: DUREE_ANIMATION,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    const barre = Animated.sequence([
+      Animated.delay(DUREE_ANIMATION),
+      Animated.timing(progression, {
+        toValue: 1,
+        duration: duree,
+        useNativeDriver: false,
+      }),
+    ]);
+
+    sequence.start(({ finished }) => finished && props.onHide());
+    barre.start();
+
+    return () => {
+      sequence.stop();
+      barre.stop();
+    };
+  }, [props.message]);
+
+  const translateX = apparition.interpolate({
+    inputRange: [0, 1],
+    outputRange: [400, 0],
+  });
+  const largeurBarre = progression.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['100%', '0%'],
+  });
+
+  return (
+    <Animated.View
+      style={[
+        styles.position,
+        { opacity: apparition, transform: [{ translateX }] },
+      ]}
+      pointerEvents="none"
+    >
+      <View style={styles.carte}>
+        <View style={styles.pisteBarre}>
+          <Animated.View
+            style={[
+              styles.barre,
+              { width: largeurBarre, backgroundColor: niveau.couleur },
+            ]}
+          />
+        </View>
+        <View style={styles.contenu}>
+          <MaterialIcons
+            name={niveau.icone}
+            size={22}
+            color={niveau.couleur}
+            style={styles.icone}
+          />
+          <Text style={styles.texte}>{props.message}</Text>
+        </View>
+      </View>
+    </Animated.View>
+  );
+}
+
+const styles = StyleSheet.create({
+  position: {
+    position: 'absolute',
+    top: 50,
+    left: SPACING.xl,
+    right: SPACING.xl,
+  },
+  carte: {
+    backgroundColor: COLORS.blanc,
+    borderRadius: RADIUS.lg,
+    overflow: 'hidden',
+    elevation: 8,
+    shadowColor: 'rgba(0,0,0,0.5',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+  },
+  pisteBarre: {
+    height: 4,
+    backgroundColor: COLORS.bordure,
+  },
+  barre: {
+    height: 4,
+  },
+  contenu: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+  },
+  icone: {
+    marginRight: SPACING.md,
+  },
+  texte: {
+    ...TEXTE.corpsFort,
+    flex: 1,
+  },
+});
