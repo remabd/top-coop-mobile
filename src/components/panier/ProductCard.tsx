@@ -55,7 +55,9 @@ export function ProductCard(props: {
       </Pressable>
 
       <View style={styles.droite}>
-        <Text style={styles.prix}>{produit.prix * produit.quantite}€</Text>
+        <Text style={styles.prix}>
+          {(produit.prix * produit.quantite).toFixed(2)}€
+        </Text>
         <Pressable
           onPress={() => props.supprimeProduit(produit.typeProduit.id)}
           hitSlop={8}

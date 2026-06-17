@@ -56,6 +56,14 @@ export function PanierScreen() {
     <View style={styles.contenu}>
       <View style={titres.entete}>
         <Text style={titres.titre}>Panier</Text>
+        {panierVide ? (
+          <></>
+        ) : (
+          <Pressable style={styles.lien} onPress={voirProduits}>
+            <MaterialIcons name="inventory-2" size={16} color={COLORS.texte} />
+            <Text style={styles.lienTexte}>Voir les produits</Text>
+          </Pressable>
+        )}
       </View>
 
       {panierVide ? (
@@ -84,10 +92,6 @@ export function PanierScreen() {
         </View>
       ) : (
         <>
-          <Pressable style={styles.lien} onPress={voirProduits}>
-            <MaterialIcons name="inventory-2" size={16} color={COLORS.texte} />
-            <Text style={styles.lienTexte}>Voir les produits</Text>
-          </Pressable>
           <FlatList
             style={styles.liste}
             renderItem={({ item, index }) => (
