@@ -47,7 +47,7 @@ export function ActionZone() {
     <View style={styles.zone}>
       <View style={styles.totalLigne}>
         <Text style={styles.totalLabel}>Prix total du panier</Text>
-        <Text style={styles.totalPrix}>{panier.prix}€</Text>
+        <Text style={styles.totalPrix}>{panier.prix.toFixed(2)}€</Text>
       </View>
 
       <View style={styles.boutons}>

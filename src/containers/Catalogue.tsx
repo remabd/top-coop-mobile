@@ -70,7 +70,6 @@ export function Catalogue() {
             'Content-Type': 'application/json',
           },
         });
-
         if (!response.ok) {
           throw new Error('Impossible de charger le catalogue.');
         }
@@ -81,7 +80,7 @@ export function Catalogue() {
         const groups: Record<string, ProduitGroupé> = {};
 
         listeBrute.forEach((p) => {
-          if (!p || !p.typeProduitId || !p.typeProduit || p.dateSortie) return;
+          if (!p || !p.typeProduitId || !p.typeProduit) return;
 
           if (!groups[p.typeProduitId]) {
             groups[p.typeProduitId] = {
