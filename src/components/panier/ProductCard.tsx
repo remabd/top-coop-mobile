@@ -4,6 +4,7 @@ import { TypeProduitVersPanierProduit, Unite } from '../../models/panier.type';
 import { useState } from 'react';
 import { COLORS, RADIUS, SPACING, TEXTE } from '../../STYLE_CONSTS';
 import { ProduitQuantite } from './ProduitQuantite';
+import { BlurView } from 'expo-blur';
 
 export function ProductCard(props: {
   produit: TypeProduitVersPanierProduit;
@@ -72,28 +73,38 @@ export function ProductCard(props: {
         animationType="fade"
         onRequestClose={() => setVisible(false)}
       >
-        <Pressable style={styles.overlay} onPress={() => setVisible(false)}>
-          <Pressable style={styles.carte} onPress={() => {}}>
-            <ProduitQuantite
-              produit={produit}
-              onChangeQuantite={setQuantiteAValider}
-            />
-            <View style={styles.boutons}>
-              <Pressable
-                style={[styles.bouton, styles.boutonAnnuler]}
-                onPress={() => setVisible(false)}
-              >
-                <Text style={styles.boutonTexte}>Annuler</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.bouton, styles.boutonValider]}
-                onPress={valide}
-              >
-                <Text style={styles.boutonTexte}>Ajouter</Text>
-              </Pressable>
-            </View>
+        <BlurView
+          intensity={4}
+          tint="dark"
+          experimentalBlurMethod="dimezisBlurView"
+          style={styles.overlay}
+        >
+          <Pressable
+            style={styles.overlayPressable}
+            onPress={() => setVisible(false)}
+          >
+            <Pressable style={styles.carte} onPress={() => {}}>
+              <ProduitQuantite
+                produit={produit}
+                onChangeQuantite={setQuantiteAValider}
+              />
+              <View style={styles.boutons}>
+                <Pressable
+                  style={[styles.bouton, styles.boutonAnnuler]}
+                  onPress={() => setVisible(false)}
+                >
+                  <Text style={styles.boutonTexte}>Annuler</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.bouton, styles.boutonValider]}
+                  onPress={valide}
+                >
+                  <Text style={styles.boutonTexte}>Ajouter</Text>
+                </Pressable>
+              </View>
+            </Pressable>
           </Pressable>
-        </Pressable>
+        </BlurView>
       </Modal>
     </View>
   );
@@ -138,10 +149,12 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
+  },
+  overlayPressable: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    padding: SPACING.xl,
   },
   carte: {
     width: '85%',

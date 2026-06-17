@@ -6,7 +6,14 @@ import { AppDispatch } from '../store/store';
 import { ProductCard } from '../components/panier/ProductCard';
 import { useNavigation } from '@react-navigation/native';
 import { ActionZone } from '../components/panier/ActionZone';
-import { COLORS, FONTS_OUTFIT, FONT_SIZE, RADIUS, SPACING, TEXTE } from '../STYLE_CONSTS';
+import {
+  COLORS,
+  FONTS_OUTFIT,
+  FONT_SIZE,
+  RADIUS,
+  SPACING,
+  TEXTE,
+} from '../STYLE_CONSTS';
 
 export function PanierScreen() {
   const navigation = useNavigation<any>();
@@ -106,6 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.blanc,
+    marginTop: 30,
     paddingTop: SPACING.xxl,
     paddingHorizontal: SPACING.xl,
     paddingBottom: SPACING.xl,

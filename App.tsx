@@ -30,16 +30,63 @@ import {
   Figtree_600SemiBold,
   Figtree_700Bold,
 } from '@expo-google-fonts/figtree';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { COLORS } from './src/STYLE_CONSTS';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function BottomNav() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="profil" component={Profil} />
-      <Tab.Screen name="panier" component={PanierScreen} />
-      <Tab.Screen name="participations" component={Participations} />
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: COLORS.orange,
+        tabBarInactiveTintColor: COLORS.noir,
+      }}
+    >
+      <Tab.Screen
+        name="profil"
+        component={Profil}
+        options={{
+          title: 'Profil',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="account-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="panier"
+        component={PanierScreen}
+        options={{
+          title: 'Panier',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="cart-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="participations"
+        component={Participations}
+        options={{
+          title: 'Participations',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="calendar-month-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }

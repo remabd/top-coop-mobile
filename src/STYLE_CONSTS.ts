@@ -11,6 +11,7 @@ export const COLORS = {
   placeholder: '#6B6B6B',
   avatar: '#D9D9D9',
   bordure: '#D7D7D7',
+  noir: '#222222',
 };
 
 export const FONTS_OUTFIT = {
