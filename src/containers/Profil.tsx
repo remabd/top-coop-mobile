@@ -114,7 +114,14 @@ export function Profil(props: any) {
           <>
             {message.length > 0 && <Text style={styles.erreur}>{message}</Text>}
             <Paniers paniers={paniers} />
-            <Participations participations={participations} />
+            <Participations
+              participations={participations}
+              onAnnulee={(annulee) =>
+                setParticipations((prev) =>
+                  prev.filter((p) => p.id !== annulee.id)
+                )
+              }
+            />
             <Accordeon
               title="Préférences"
               ouvert
