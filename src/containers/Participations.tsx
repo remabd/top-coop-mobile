@@ -7,14 +7,20 @@ import {
   TouchableOpacity,
   Modal,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import GestureRecognizer from 'react-native-swipe-gestures';
-import { useNavigation } from '@react-navigation/native';
+import { BlurView } from 'expo-blur';
 import { loadToken } from '../store/securetoken';
 import { Toast, NiveauToast } from '../components/Toast';
 import { titres } from '../styles/titres.style';
-import { SPACING } from '../STYLE_CONSTS';
+import { SPACING, TEXTE } from '../STYLE_CONSTS';
+import { modal } from '../styles/modal.style';
+import { demandeQuota } from '../api/participation.api';
+import { chargeParticipations } from '../api/utilisateur.api';
+import { ParticipationAvecCreneauEtCoParticipants } from '../models/participation.type';
+import { ListeParticipation } from '../components/participations/ListeParticipations';
 
 interface Creneau {
   id: string;
@@ -62,17 +68,22 @@ function decodeJwt(token: string): any {
 }
 
 export function Participations() {
-  const navigation = useNavigation<any>();
   const [token, setToken] = useState<string | null>(null);
   const [creneaux, setCreneaux] = useState<Creneau[]>([]);
   const [participations, setParticipations] = useState<Participation[]>([]);
   const [utilisateurs, setUtilisateurs] = useState<Utilisateur[]>([]);
+  const [mesParticipations, setMesParticipations] = useState<
+    ParticipationAvecCreneauEtCoParticipants[]
+  >([]);
   const [loading, setLoading] = useState(true);
+  const [quota, setQuota] = useState<number>(3);
 
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [selectedCreneauIds, setSelectedCreneauIds] = useState<string[]>([]);
   const [expandedRecapIds, setExpandedRecapIds] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isMesParticipationsVisible, setIsMesParticipationsVisible] =
+    useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [toastConfig, setToastConfig] = useState<{
@@ -85,6 +96,10 @@ export function Participations() {
     async function init() {
       const t = await loadToken();
       setToken(t);
+      const reponse = await demandeQuota();
+      if (reponse.ok) {
+        setQuota(reponse.data);
+      }
       if (t) {
         const decoded = decodeJwt(t);
         if (decoded) {
@@ -96,12 +111,25 @@ export function Participations() {
           fetchCreneaux(t),
           fetchParticipations(t),
           fetchUtilisateurs(t),
+          fetchMesParticipations(),
         ]);
       }
       setLoading(false);
     }
     init();
   }, []);
+
+  const fetchMesParticipations = async () => {
+    const reponse = await chargeParticipations();
+    if (reponse.ok) {
+      reponse.data.sort(
+        (a, b) =>
+          new Date(b.creneau.dateDebut).getTime() -
+          new Date(a.creneau.dateDebut).getTime()
+      );
+      setMesParticipations(reponse.data);
+    }
+  };
 
   const fetchCreneaux = async (authToken: string) => {
     try {
@@ -264,7 +292,7 @@ export function Participations() {
         niveau: 'ok',
       });
 
-      await fetchParticipations(token);
+      await Promise.all([fetchParticipations(token), fetchMesParticipations()]);
     } catch (error: any) {
       console.error('Erreur lors de la réservation :', error);
       setToastConfig({
@@ -277,8 +305,8 @@ export function Participations() {
     }
   };
 
-  const handleGoToProfilParticipations = () => {
-    navigation.navigate('profil', { openSection: 'Mes participations' });
+  const ouvreMesParticipations = () => {
+    setIsMesParticipationsVisible(true);
   };
 
   const renderCreneauxDuJour = () => {
@@ -398,10 +426,10 @@ export function Participations() {
       <View style={titres.entete}>
         <Text style={titres.titre}>Participations</Text>
         <Text style={styles.subtitlePage}>
-          Vous avez <Text style={{ fontWeight: 'bold' }}>Xh</Text> à réaliser ce
-          mois-ci.
+          Vous avez <Text style={{ fontWeight: 'bold' }}>{quota}h</Text> à
+          réaliser ce mois-ci.
         </Text>
-        <TouchableOpacity onPress={handleGoToProfilParticipations}>
+        <TouchableOpacity onPress={ouvreMesParticipations}>
           <Text style={styles.linkText}>Voir mes participations</Text>
         </TouchableOpacity>
       </View>
@@ -544,6 +572,48 @@ export function Participations() {
             </View>
           </View>
         </View>
+      </Modal>
+
+      {/* --- MODAL MES PARTICIPATIONS --- */}
+      <Modal
+        visible={isMesParticipationsVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsMesParticipationsVisible(false)}
+      >
+        <BlurView
+          intensity={4}
+          tint="dark"
+          experimentalBlurMethod="dimezisBlurView"
+          style={modal.overlay}
+        >
+          <Pressable
+            style={modal.overlayPressable}
+            onPress={() => setIsMesParticipationsVisible(false)}
+          >
+            <Pressable style={modal.carte} onPress={() => {}}>
+              <Text style={styles.mesParticipationsTitre}>
+                Mes participations
+              </Text>
+              <ListeParticipation
+                participations={mesParticipations}
+                scrollable
+                onAnnulee={(annulee) => {
+                  setMesParticipations((prev) =>
+                    prev.filter((p) => p.id !== annulee.id)
+                  );
+                  if (token) fetchParticipations(token);
+                }}
+              />
+              <Pressable
+                style={modal.btn}
+                onPress={() => setIsMesParticipationsVisible(false)}
+              >
+                <Text style={modal.btnText}>Fermer</Text>
+              </Pressable>
+            </Pressable>
+          </Pressable>
+        </BlurView>
       </Modal>
 
       {/* --- RENDER TOAST GLOBAL --- */}
@@ -732,4 +802,9 @@ const styles = StyleSheet.create({
   btnAnnuler: { backgroundColor: '#3E5243' },
   btnValider: { backgroundColor: '#D4833B' },
   btnTextWhite: { fontFamily: 'Outfit_700Bold', color: '#FFF', fontSize: 16 },
+  mesParticipationsTitre: {
+    ...TEXTE.titreModal,
+    textAlign: 'center',
+    marginBottom: SPACING.lg,
+  },
 });
