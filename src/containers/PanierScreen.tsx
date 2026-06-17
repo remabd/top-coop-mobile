@@ -117,14 +117,6 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     padding: SPACING.xl,
   },
-  // container: {
-  //   flex: 1,
-  //   backgroundColor: COLORS.blanc,
-  //   marginTop: 30,
-  //   paddingTop: SPACING.xxl,
-  //   paddingHorizontal: SPACING.xl,
-  //   paddingBottom: SPACING.xl,
-  // },
   lien: {
     flexDirection: 'row',
     alignItems: 'center',

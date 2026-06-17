@@ -148,7 +148,6 @@ const styles = StyleSheet.create({
     height: 54,
     paddingHorizontal: SPACING.xl,
     marginBottom: SPACING.xxl,
-    // ombre douce
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 4,

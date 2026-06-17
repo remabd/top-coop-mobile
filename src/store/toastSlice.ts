@@ -3,7 +3,7 @@ import { RootState } from './store';
 import { NiveauToast } from '../components/Toast';
 
 interface ToastState {
-  id: number; // s'incrémente à chaque toast pour forcer le remontage
+  id: number;
   message: string;
   niveau: NiveauToast;
   visible: boolean;
