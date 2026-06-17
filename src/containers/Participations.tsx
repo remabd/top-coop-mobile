@@ -12,63 +12,32 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { BlurView } from 'expo-blur';
-import { loadToken } from '../store/securetoken';
 import { Toast, NiveauToast } from '../components/Toast';
 import { titres } from '../styles/titres.style';
 import { SPACING, TEXTE } from '../STYLE_CONSTS';
 import { modal } from '../styles/modal.style';
-import { demandeQuota } from '../api/participation.api';
-import { chargeParticipations } from '../api/utilisateur.api';
+import {
+  creeParticipation,
+  demandeQuota,
+  fetchCreneaux,
+  fetchParticipations,
+  fetchUtilisateurs,
+  Creneau,
+  Participation,
+  Utilisateur,
+} from '../api/participation.api';
+import {
+  chargeInformations,
+  chargeParticipations,
+} from '../api/utilisateur.api';
 import { ParticipationAvecCreneauEtCoParticipants } from '../models/participation.type';
 import { ListeParticipation } from '../components/participations/ListeParticipations';
-
-interface Creneau {
-  id: string;
-  nom: string;
-  dateDebut: string;
-  dateFin: string;
-  description?: string | null;
-  capacite: number;
-}
-
-interface Participation {
-  id?: string;
-  utilisateurId: string;
-  creneauId: string;
-  dateCreation?: string;
-}
-
-interface Utilisateur {
-  id: string;
-  nom: string;
-  prenom: string;
-}
 
 const COLORS = {
   texte: '#2C2C2C',
 };
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || '';
-
-function decodeJwt(token: string): any {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch (error) {
-    console.error('Erreur lors du décodage du JWT :', error);
-    return null;
-  }
-}
-
 export function Participations() {
-  const [token, setToken] = useState<string | null>(null);
   const [creneaux, setCreneaux] = useState<Creneau[]>([]);
   const [participations, setParticipations] = useState<Participation[]>([]);
   const [utilisateurs, setUtilisateurs] = useState<Utilisateur[]>([]);
@@ -94,26 +63,23 @@ export function Participations() {
 
   useEffect(() => {
     async function init() {
-      const t = await loadToken();
-      setToken(t);
-      const reponse = await demandeQuota();
-      if (reponse.ok) {
-        setQuota(reponse.data);
+      const quotaRes = await demandeQuota();
+      if (quotaRes.ok) {
+        setQuota(quotaRes.data);
       }
-      if (t) {
-        const decoded = decodeJwt(t);
-        if (decoded) {
-          const userId = decoded.id || decoded.sub || decoded.userId;
-          setCurrentUserId(userId || null);
-        }
 
-        await Promise.all([
-          fetchCreneaux(t),
-          fetchParticipations(t),
-          fetchUtilisateurs(t),
-          fetchMesParticipations(),
-        ]);
+      const infos = await chargeInformations();
+      if (infos.ok) {
+        setCurrentUserId(infos.data.id);
       }
+
+      await Promise.all([
+        chargeCreneaux(),
+        rafraichitParticipations(),
+        chargeUtilisateurs(),
+        fetchMesParticipations(),
+      ]);
+
       setLoading(false);
     }
     init();
@@ -131,54 +97,24 @@ export function Participations() {
     }
   };
 
-  const fetchCreneaux = async (authToken: string) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/creneau`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await response.json();
-      const liste = Array.isArray(data) ? data : data.data || [];
-      setCreneaux(liste);
-    } catch (error) {
-      console.error('Erreur récupération créneaux:', error);
+  const chargeCreneaux = async () => {
+    const reponse = await fetchCreneaux();
+    if (reponse.ok) {
+      setCreneaux(reponse.data);
     }
   };
 
-  const fetchParticipations = async (authToken: string) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/participation`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await response.json();
-      const liste = Array.isArray(data) ? data : data.data || [];
-      setParticipations(liste);
-    } catch (error) {
-      console.error('Erreur récupération participations:', error);
+  const rafraichitParticipations = async () => {
+    const reponse = await fetchParticipations();
+    if (reponse.ok) {
+      setParticipations(reponse.data);
     }
   };
 
-  const fetchUtilisateurs = async (authToken: string) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/utilisateur`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await response.json();
-      const liste = Array.isArray(data) ? data : data.data || [];
-      setUtilisateurs(liste);
-    } catch (error) {
-      console.error('Erreur récupération utilisateurs:', error);
+  const chargeUtilisateurs = async () => {
+    const reponse = await fetchUtilisateurs();
+    if (reponse.ok) {
+      setUtilisateurs(reponse.data);
     }
   };
 
@@ -248,7 +184,7 @@ export function Participations() {
   };
 
   const handleValiderReservations = async () => {
-    if (!token || !currentUserId) {
+    if (!currentUserId) {
       setToastConfig({
         message: 'Session utilisateur introuvable. Veuillez vous reconnecter.',
         niveau: 'alerte',
@@ -257,32 +193,19 @@ export function Participations() {
     }
 
     setIsSubmitting(true);
-
     try {
-      const promises = selectedCreneauIds.map((id) =>
-        fetch(`${API_BASE_URL}/participation`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            utilisateurId: currentUserId,
-            creneauId: id,
-          }),
-        }).then(async (res) => {
-          if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            throw new Error(
-              errData.message ||
-                "Erreur lors de l'enregistrement de la participation."
-            );
-          }
-          return res.json();
-        })
+      const reponses = await Promise.all(
+        selectedCreneauIds.map((id) => creeParticipation(id, currentUserId))
       );
 
-      await Promise.all(promises);
+      const echec = reponses.find((reponse) => !reponse.ok);
+      if (echec && !echec.ok) {
+        const message =
+          echec.error.kind === 'http' ? echec.error.message : undefined;
+        throw new Error(
+          message || "Erreur lors de l'enregistrement de la participation."
+        );
+      }
 
       setSelectedCreneauIds([]);
       setIsModalVisible(false);
@@ -292,7 +215,7 @@ export function Participations() {
         niveau: 'ok',
       });
 
-      await Promise.all([fetchParticipations(token), fetchMesParticipations()]);
+      await Promise.all([rafraichitParticipations(), fetchMesParticipations()]);
     } catch (error: any) {
       console.error('Erreur lors de la réservation :', error);
       setToastConfig({
@@ -344,15 +267,12 @@ export function Participations() {
       const dateDeb = new Date(creneau.dateDebut);
       const dateFin = new Date(creneau.dateFin);
 
-      // 1. Vérification si le créneau est déjà passé
       const isPast = dateDeb < maintenant;
 
-      // 2. Vérification si l'utilisateur connecté est déjà inscrit à ce créneau
       const isAlreadyRegistered = participations.some(
         (p) => p.creneauId === creneau.id && p.utilisateurId === currentUserId
       );
 
-      // Un créneau ne peut pas être cliqué s'il est passé OU si on y est déjà inscrit
       const isDisabled = isPast || isAlreadyRegistered;
 
       return (
@@ -422,7 +342,6 @@ export function Participations() {
 
   return (
     <View style={styles.contenu}>
-      {/* --- HEADER --- */}
       <View style={titres.entete}>
         <Text style={titres.titre}>Participations</Text>
         <Text style={styles.subtitlePage}>
@@ -434,7 +353,6 @@ export function Participations() {
         </TouchableOpacity>
       </View>
 
-      {/* --- DATE SELECTOR --- */}
       <View style={styles.dateSelector}>
         <TouchableOpacity onPress={handlePreviousDay}>
           <Text style={styles.arrow}>{'<'}</Text>
@@ -445,7 +363,6 @@ export function Participations() {
         </TouchableOpacity>
       </View>
 
-      {/* --- ZONE SWIPABLE --- */}
       <GestureRecognizer
         onSwipeLeft={handleNextDay}
         onSwipeRight={handlePreviousDay}
@@ -460,7 +377,6 @@ export function Participations() {
         </ScrollView>
       </GestureRecognizer>
 
-      {/* --- BOUTON FLOTTANT --- */}
       {selectedCreneauIds.length > 0 && (
         <TouchableOpacity
           style={styles.floatingButton}
@@ -470,7 +386,6 @@ export function Participations() {
         </TouchableOpacity>
       )}
 
-      {/* --- MODAL --- */}
       <Modal
         visible={isModalVisible}
         transparent={true}
@@ -574,7 +489,6 @@ export function Participations() {
         </View>
       </Modal>
 
-      {/* --- MODAL MES PARTICIPATIONS --- */}
       <Modal
         visible={isMesParticipationsVisible}
         transparent
@@ -602,7 +516,7 @@ export function Participations() {
                   setMesParticipations((prev) =>
                     prev.filter((p) => p.id !== annulee.id)
                   );
-                  if (token) fetchParticipations(token);
+                  rafraichitParticipations();
                 }}
               />
               <Pressable
@@ -616,7 +530,6 @@ export function Participations() {
         </BlurView>
       </Modal>
 
-      {/* --- RENDER TOAST GLOBAL --- */}
       {toastConfig && (
         <Toast
           message={toastConfig.message}
@@ -766,7 +679,6 @@ const styles = StyleSheet.create({
     color: '#2C2C2C',
     flex: 1,
   },
-  // La correction est ici (guillemet corrigé sur le backgroundColor) :
   recapCardDetails: {
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
     paddingHorizontal: 12,
