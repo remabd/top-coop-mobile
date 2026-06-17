@@ -40,7 +40,7 @@ const COLORS = {
   texte: "#2C2C2C",
 };
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://10.12.164.51:3002"; 
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || ""; 
 
 function decodeJwt(token: string): any {
   try {
