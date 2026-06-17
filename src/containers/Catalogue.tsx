@@ -134,7 +134,6 @@ export function Catalogue() {
     const prixAffiche =
       typeof type.prix === 'number' ? type.prix.toFixed(2) : '0.00';
 
-    // Alternance des couleurs de fond des cartes (index pair vs index impair)
     const fondCarte = index % 2 === 0 ? styles.carteClaire : styles.carteGrisee;
 
     return (
@@ -183,7 +182,6 @@ export function Catalogue() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Barre supérieure */}
       <View style={styles.headerContainer}>
         <TouchableOpacity
           style={styles.boutonRetour}
@@ -196,7 +194,6 @@ export function Catalogue() {
         <View style={styles.headerEspace} />
       </View>
 
-      {/* Barre de recherche verte et élargie */}
       <View style={styles.searchContainer}>
         <MaterialIcons name="search" size={22} style={styles.searchIcon} />
         <TextInput

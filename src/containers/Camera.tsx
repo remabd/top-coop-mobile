@@ -91,7 +91,6 @@ export default function Camera() {
         <MaterialIcons name="arrow-back" size={26} color={COLORS.blanc} />
       </Pressable>
 
-      {/* Cadre de visée */}
       <View style={styles.calque} pointerEvents="box-none">
         <View style={styles.cadre} />
 

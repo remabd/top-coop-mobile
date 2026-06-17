@@ -24,9 +24,7 @@ export function Toast(props: {
   const niveau = NIVEAUX[props.niveau ?? 'ok'];
   const duree = props.duree ?? 2000;
 
-  // 0 = caché (au-dessus de l'écran), 1 = affiché
   const apparition = useRef(new Animated.Value(0)).current;
-  // 0 = barre pleine, 1 = barre vide
   const progression = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {

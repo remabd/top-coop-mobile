@@ -163,9 +163,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     padding: SPACING.xl,
   },
-  contenu: {
-    // height: "100%",
-  },
+  contenu: {},
   erreur: {
     fontFamily: FONTS_FIGTREE.semibold,
     fontSize: FONT_SIZE.sm,
