@@ -2,6 +2,7 @@ import { FlatList, View, Text, Pressable, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { modifiePanier, panierSelector } from '../store/panierSlice';
+import { afficheToast } from '../store/toastSlice';
 import { AppDispatch } from '../store/store';
 import { ProductCard } from '../components/panier/ProductCard';
 import { useNavigation } from '@react-navigation/native';
@@ -31,7 +32,12 @@ export function PanierScreen() {
         produits: produitsRestants,
       })
     );
-    //TOAST ?
+    dispatch(
+      afficheToast({
+        message: `« ${produit.typeProduit.nom} » retiré du panier`,
+        niveau: 'ok',
+      })
+    );
   }
 
   function modifieQuantite(id: string, quantite: number): void {
@@ -45,7 +51,7 @@ export function PanierScreen() {
         produits,
       })
     );
-    //TOAST ?
+    dispatch(afficheToast({ message: 'Quantité mise à jour', niveau: 'ok' }));
   }
 
   function voirProduits() {

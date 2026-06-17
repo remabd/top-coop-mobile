@@ -11,6 +11,7 @@ import { COLORS, RADIUS, SPACING, TEXTE } from '../STYLE_CONSTS';
 import { demandeTypeProduitAvecEan } from '../api/panier.api';
 import { useDispatch, useSelector } from 'react-redux';
 import { modifiePanier, panierSelector } from '../store/panierSlice';
+import { afficheToast } from '../store/toastSlice';
 
 export default function Camera() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -46,7 +47,12 @@ export default function Camera() {
 
     const response = await demandeTypeProduitAvecEan(code);
     if (!response.ok) {
-      //TOAST
+      const message =
+        response.error.kind === 'network'
+          ? 'Connexion au serveur impossible'
+          : 'Aucun produit trouvé pour ce code-barres';
+      dispatch(afficheToast({ message, niveau: 'alerte' }));
+      setCode(null);
       return;
     }
     const indexExistant = panier.produits.findIndex(
@@ -68,7 +74,12 @@ export default function Camera() {
       })
     );
 
-    //TOAST
+    dispatch(
+      afficheToast({
+        message: `« ${response.data.typeProduit.nom} » ajouté au panier`,
+        niveau: 'ok',
+      })
+    );
     setCode(null);
   }
 
